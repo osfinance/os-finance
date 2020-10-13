@@ -102,61 +102,74 @@ export default function App() {
           <TopLevelModals />
           <Web3ReactManager>
             <Switch>
-              <Route exact strict path="/compound/lending" component={Lend} />
-              <Route exact strict path="/compound/find" component={FlashLoanPoolFinder} />
-              <Route exact strict path="/compound/pool" component={FlashLoanPool} />
-              <Route exact strict path="/compound/deer" component={DeerEarn} />
-              <Route exact strict path="/compound/vote" component={DeerVote} />
-              <Route exact strict path="/compound/create" component={FlashLoanRedirectToAddLiquidity} />
-              <Route exact path="/compound/add" component={AddFlashLoanLiquidity} />
-              <Route exact path="/compound/add/:currencyId" component={RedirectFlashLoanAddLiquidity} />
-              <Route exact path="/compound/create" component={AddFlashLoanLiquidity} />
-              <Route exact path="/compound/create/:currencyId" component={RedirectFlashLoanAddLiquidity} />
-              <Route exact strict path="/compound/remove/:currencyId" component={RemoveFlashLoanLiquidity} />
-              <Route exact strict path="/compound/deer/:currencyId" component={DeerManage} />
-              <Route exact strict path="/compound/vote/:id" component={VotePage} />
-              <Route component={RedirectPathToPoolOnly} />
               <Route exact strict path="/home" component={Home} />
-              <Route exact strict path="/sushiswap/swap" component={Swap} />
-              <Route exact strict path="/sushiswap/swap/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/sushiswap/create" component={RedirectToAddLiquidity} />
-              <Route exact strict path="/sushiswap/pool" component={Pool} />
-              <Route exact path="/sushiswap/add" component={AddLiquidity} />
-              <Route exact path="/sushiswap/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/sushiswap/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact path="/sushiswap/create" component={AddLiquidity} />
-              <Route exact path="/sushiswap/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/sushiswap/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route
-                exact
-                strict
-                path="/sushiswap/remove/:tokens"
-                component={RedirectOldRemoveLiquidityPathStructure}
-              />
-              <Route exact strict path="/sushiswap/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-              <Route exact strict path="/sushiswap/vote/:id" component={VotePage} />
-              <Route exact strict path="/uniswap/swap" component={Swap} />
-              <Route exact strict path="/uniswap/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
-              <Route exact strict path="/uniswap/swap/:outputCurrency" component={RedirectToSwap} />
-              <Route exact strict path="/uniswap/send" component={RedirectPathToSwapOnly} />
-              <Route exact strict path="/uniswap/find" component={PoolFinder} />
-              <Route exact strict path="/uniswap/pool" component={Pool} />
-              <Route exact strict path="/uniswap/uni" component={Earn} />
-              <Route exact strict path="/uniswap/vote" component={Vote} />
-              <Route exact strict path="/uniswap/create" component={RedirectToAddLiquidity} />
-              <Route exact path="/uniswap/add" component={AddLiquidity} />
-              <Route exact path="/uniswap/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/uniswap/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact path="/uniswap/create" component={AddLiquidity} />
-              <Route exact path="/uniswap/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-              <Route exact path="/uniswap/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-              <Route exact strict path="/uniswap/remove/v1/:address" component={RemoveV1Exchange} />
-              <Route exact strict path="/uniswap/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
-              <Route exact strict path="/uniswap/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
-              <Route exact strict path="/uniswap/migrate/v1" component={MigrateV1} />
-              <Route exact strict path="/uniswap/migrate/v1/:address" component={MigrateV1Exchange} />
-              <Route exact strict path="/uniswap/uni/:currencyIdA/:currencyIdB" component={Manage} />
-              <Route exact strict path="/uniswap/vote/:id" component={VotePage} />
+              <Route path="/compound">
+                <Route exact strict path="/compound/lending" component={Lend} />
+                <Route exact strict path="/compound/find" component={FlashLoanPoolFinder} />
+                <Route exact strict path="/compound/pool" component={FlashLoanPool} />
+                <Route exact strict path="/compound/deer" component={DeerEarn} />
+                <Route exact strict path="/compound/vote" component={DeerVote} />
+                <Route exact strict path="/compound/create" component={FlashLoanRedirectToAddLiquidity} />
+                <Route exact path="/compound/add" component={AddFlashLoanLiquidity} />
+                <Route exact path="/compound/add/:currencyId" component={RedirectFlashLoanAddLiquidity} />
+                <Route exact path="/compound/create" component={AddFlashLoanLiquidity} />
+                <Route exact path="/compound/create/:currencyId" component={RedirectFlashLoanAddLiquidity} />
+                <Route exact strict path="/compound/remove/:currencyId" component={RemoveFlashLoanLiquidity} />
+                <Route exact strict path="/compound/deer/:currencyId" component={DeerManage} />
+                <Route exact strict path="/compound/vote/:id" component={VotePage} />
+                <Route component={RedirectPathToPoolOnly} />
+              </Route>
+              <Route path="/sushiswap">
+                <Route exact strict path="/sushiswap/swap" component={Swap} />
+                <Route exact strict path="/sushiswap/swap/:outputCurrency" component={RedirectToSwap} />
+                <Route exact strict path="/sushiswap/create" component={RedirectToAddLiquidity} />
+                <Route exact strict path="/sushiswap/pool" component={Pool} />
+                <Route exact path="/sushiswap/add" component={AddLiquidity} />
+                <Route exact path="/sushiswap/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                <Route exact path="/sushiswap/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                <Route exact path="/sushiswap/create" component={AddLiquidity} />
+                <Route exact path="/sushiswap/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                <Route exact path="/sushiswap/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                <Route
+                  exact
+                  strict
+                  path="/sushiswap/remove/:tokens"
+                  component={RedirectOldRemoveLiquidityPathStructure}
+                />
+                <Route exact strict path="/sushiswap/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                <Route exact strict path="/sushiswap/vote/:id" component={VotePage} />
+                <Route component={RedirectPathToSushiswapOnly} />
+              </Route>
+              <Route path="/uniswap">
+                <Route exact strict path="/uniswap/swap" component={Swap} />
+                <Route exact strict path="/uniswap/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
+                <Route exact strict path="/uniswap/swap/:outputCurrency" component={RedirectToSwap} />
+                <Route exact strict path="/uniswap/send" component={RedirectPathToSwapOnly} />
+                <Route exact strict path="/uniswap/find" component={PoolFinder} />
+                <Route exact strict path="/uniswap/pool" component={Pool} />
+                <Route exact strict path="/uniswap/uni" component={Earn} />
+                <Route exact strict path="/uniswap/vote" component={Vote} />
+                <Route exact strict path="/uniswap/create" component={RedirectToAddLiquidity} />
+                <Route exact path="/uniswap/add" component={AddLiquidity} />
+                <Route exact path="/uniswap/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                <Route exact path="/uniswap/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                <Route exact path="/uniswap/create" component={AddLiquidity} />
+                <Route exact path="/uniswap/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                <Route exact path="/uniswap/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                <Route exact strict path="/uniswap/remove/v1/:address" component={RemoveV1Exchange} />
+                <Route
+                  exact
+                  strict
+                  path="/uniswap/remove/:tokens"
+                  component={RedirectOldRemoveLiquidityPathStructure}
+                />
+                <Route exact strict path="/uniswap/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                <Route exact strict path="/uniswap/migrate/v1" component={MigrateV1} />
+                <Route exact strict path="/uniswap/migrate/v1/:address" component={MigrateV1Exchange} />
+                <Route exact strict path="/uniswap/uni/:currencyIdA/:currencyIdB" component={Manage} />
+                <Route exact strict path="/uniswap/vote/:id" component={VotePage} />
+                <Route component={RedirectPathToUniswapOnly} />
+              </Route>
               <Route component={RedirectPathToHomeOnly} />
             </Switch>
           </Web3ReactManager>
