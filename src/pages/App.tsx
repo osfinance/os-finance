@@ -38,6 +38,7 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap'
 import {
   OpenClaimAddressModalAndRedirectToSwap,
+  RedirectPathToLendingOnly,
   RedirectPathToSwapOnly,
   RedirectToSwap
 } from './Swap/redirects'
