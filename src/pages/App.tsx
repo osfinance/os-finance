@@ -11,7 +11,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import { RedirectPathToLendOnly } from './Swap/redirects'
+import { RedirectPathToLendingOnly } from './Swap/redirects'
 
 import Lend from './Lend'
 
@@ -73,8 +73,8 @@ export default function App() {
           <TopLevelModals />
           <Web3ReactManager>
             <Switch>
-              <Route exact strict path="/lend" component={Lend} />
-              <Route component={RedirectPathToLendOnly} />
+              <Route exact strict path="/lending" component={Lend} />
+              <Route component={RedirectPathToLendingOnly} />
             </Switch>
           </Web3ReactManager>
           <Marginer />
