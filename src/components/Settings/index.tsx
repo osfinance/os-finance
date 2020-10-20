@@ -16,10 +16,8 @@ import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'
-import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
-import TransactionSettings from '../TransactionSettings'
 
 const StyledMenuIcon = styled(Settings)`
   height: 20px;
@@ -127,9 +125,6 @@ export default function SettingsTab() {
   const toggle = useToggleSettingsMenu()
 
   const theme = useContext(ThemeContext)
-  const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
-
-  const [ttl, setTtl] = useUserTransactionTTL()
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
 
