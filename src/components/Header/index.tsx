@@ -289,6 +289,13 @@ const EmojiIcon = styled.div`
   text-decoration: none;
 `
 
+export enum PageFields {
+  HOME = 'home',
+  UNISWAP = 'uniswap',
+  SUSHISWAP = 'sushiswap',
+  COMPOUND = 'compound'
+}
+
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
