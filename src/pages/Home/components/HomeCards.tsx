@@ -130,8 +130,8 @@ function HomeCard({ home }: { home: Home }) {
             <CardIcon>{home.icon}</CardIcon>
             <StyledTitle>{home.name}</StyledTitle>
             <StyledDetails>
-              <StyledDetail>Deposit BTC</StyledDetail>
-              <StyledDetail>Earn YAM</StyledDetail>
+              <StyledDetail>Uniswap is a decentralized cryptocurrency exchange which through use of smart contracts.</StyledDetail>
+              {/* <StyledDetail>Earn YAM</StyledDetail> */}
             </StyledDetails>
             <Spacer />
             <Button to={`/${home.id}${home.home}`} text={'Select'}></Button>
