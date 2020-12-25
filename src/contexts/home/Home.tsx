@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useState } from 'react'
 
 import Context from './context'
 import { Home as HOME_DEX } from './types'
@@ -28,8 +28,7 @@ const HIGHLIGHT_FOR_DEX: { [key: string]: boolean } = {
   UNISWAP_DEX: true
 }
 
-// eslint-disable-next-line react/prop-types
-const Home: React.FC = ({ children }) => {
+export default function Home({ children }: { children: ReactNode }) {
   const [home, setHome] = useState<HOME_DEX[]>([])
 
   const fetchDexList = useCallback(() => {
@@ -70,5 +69,3 @@ const Home: React.FC = ({ children }) => {
     </Context.Provider>
   )
 }
-
-export default Home

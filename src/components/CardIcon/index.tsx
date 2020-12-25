@@ -1,13 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-interface CardIconProps {
-  children?: React.ReactNode
-}
-
-// eslint-disable-next-line react/prop-types
-const CardIcon: React.FC<CardIconProps> = ({ children }) => <StyledCardIcon>{children}</StyledCardIcon>
-
 const StyledCardIcon = styled.div`
   background-color: ${({ theme }) => theme.grey200};
   font-size: 36px;
@@ -20,5 +13,10 @@ const StyledCardIcon = styled.div`
   box-shadow: inset 4px 4px 8px ${({ theme }) => theme.grey300}, inset -6px -6px 12px ${({ theme }) => theme.grey100};
   margin: 0 auto ${({ theme }) => theme.spacing[3]}px;
 `
+interface CardIconProps {
+  children?: React.ReactNode
+}
 
-export default CardIcon
+export default function CardIcon({ children }: CardIconProps) {
+  return <StyledCardIcon>{children}</StyledCardIcon>
+}

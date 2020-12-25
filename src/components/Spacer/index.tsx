@@ -1,12 +1,20 @@
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 
+interface StyledSpacerProps {
+  size: number
+}
+
+const StyledSpacer = styled.div<StyledSpacerProps>`
+  height: ${({ size }) => size}px;
+  width: ${({ size }) => size}px;
+`
+
 interface SpacerProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
-// eslint-disable-next-line react/prop-types
-const Spacer: React.FC<SpacerProps> = ({ size = 'md' }) => {
+export default function Spacer({ size = 'md' }: SpacerProps) {
   const { spacing } = useContext(ThemeContext)
 
   let s: number
@@ -24,14 +32,3 @@ const Spacer: React.FC<SpacerProps> = ({ size = 'md' }) => {
 
   return <StyledSpacer size={s} />
 }
-
-interface StyledSpacerProps {
-  size: number
-}
-
-const StyledSpacer = styled.div<StyledSpacerProps>`
-  height: ${({ size }) => size}px;
-  width: ${({ size }) => size}px;
-`
-
-export default Spacer

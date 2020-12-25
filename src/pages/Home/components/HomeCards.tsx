@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import Button from './Button'
@@ -11,72 +11,6 @@ import Spacer from '../../../components/Spacer'
 import useFarms from '../../../hooks/useHome'
 
 import { Home } from '../../../contexts/home'
-
-const HomeCards: React.FC = () => {
-  const [farms] = useFarms()
-  const rows = farms.reduce<Home[][]>(
-    (farmRows, farm) => {
-      const newFarmRows = [...farmRows]
-      if (newFarmRows[newFarmRows.length - 1].length === 3) {
-        newFarmRows.push([farm])
-      } else {
-        newFarmRows[newFarmRows.length - 1].push(farm)
-      }
-      return newFarmRows
-    },
-    [[]]
-  )
-
-  return (
-    <StyledCards>
-      {!!rows[0].length ? (
-        rows.map((farmRow, i) => (
-          <StyledRow key={i}>
-            {farmRow.map((farm, j) => (
-              <React.Fragment key={j}>
-                <HomeCard home={farm} />
-                {(j === 0 || j === 1) && <StyledSpacer />}
-              </React.Fragment>
-            ))}
-          </StyledRow>
-        ))
-      ) : (
-        <StyledLoadingWrapper>
-          <IconLoader text="Loading farms" />
-        </StyledLoadingWrapper>
-      )}
-    </StyledCards>
-  )
-}
-
-interface HomeCardProps {
-  home: Home
-}
-
-const HomeCard: React.FC<HomeCardProps> = ({ home }) => {
-  return (
-    <StyledCardWrapper>
-      {!!home.highlight && <StyledCardAccent />}
-      <Card>
-        <CardContent>
-          <StyledContent>
-            <CardIcon>{home.icon}</CardIcon>
-            <StyledTitle>{home.name}</StyledTitle>
-            <StyledDetails>
-              <StyledDetail>Deposit BTC</StyledDetail>
-              <StyledDetail>Earn YAM</StyledDetail>
-            </StyledDetails>
-            <Spacer />
-            <Button to={`/${home.id}${home.home}`} text={'Select'}></Button>
-          </StyledContent>
-        </CardContent>
-      </Card>
-    </StyledCardWrapper>
-  )
-}
-
-// eslint-disable-next-line react/prop-types
-const CardContent: React.FC = ({ children }) => <StyledCardContent>{children}</StyledCardContent>
 
 const StyledCardContent = styled.div`
   display: flex;
@@ -182,4 +116,65 @@ const StyledDetail = styled.div`
   color: ${({ theme }) => theme.grey500};
 `
 
-export default HomeCards
+function CardContent({ children }: { children: ReactNode }) {
+  return <StyledCardContent>{children}</StyledCardContent>
+}
+
+function HomeCard({ home }: { home: Home }) {
+  return (
+    <StyledCardWrapper>
+      {!!home.highlight && <StyledCardAccent />}
+      <Card>
+        <CardContent>
+          <StyledContent>
+            <CardIcon>{home.icon}</CardIcon>
+            <StyledTitle>{home.name}</StyledTitle>
+            <StyledDetails>
+              <StyledDetail>Deposit BTC</StyledDetail>
+              <StyledDetail>Earn YAM</StyledDetail>
+            </StyledDetails>
+            <Spacer />
+            <Button to={`/${home.id}${home.home}`} text={'Select'}></Button>
+          </StyledContent>
+        </CardContent>
+      </Card>
+    </StyledCardWrapper>
+  )
+}
+
+export default function HomeCards() {
+  const [farms] = useFarms()
+  const rows = farms.reduce<Home[][]>(
+    (farmRows, farm) => {
+      const newFarmRows = [...farmRows]
+      if (newFarmRows[newFarmRows.length - 1].length === 3) {
+        newFarmRows.push([farm])
+      } else {
+        newFarmRows[newFarmRows.length - 1].push(farm)
+      }
+      return newFarmRows
+    },
+    [[]]
+  )
+
+  return (
+    <StyledCards>
+      {!!rows[0].length ? (
+        rows.map((farmRow, i) => (
+          <StyledRow key={i}>
+            {farmRow.map((farm, j) => (
+              <React.Fragment key={j}>
+                <HomeCard home={farm} />
+                {(j === 0 || j === 1) && <StyledSpacer />}
+              </React.Fragment>
+            ))}
+          </StyledRow>
+        ))
+      ) : (
+        <StyledLoadingWrapper>
+          <IconLoader text="Loading farms" />
+        </StyledLoadingWrapper>
+      )}
+    </StyledCards>
+  )
+}

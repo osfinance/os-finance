@@ -1,12 +1,5 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
-
-// eslint-disable-next-line react/prop-types
-const Page: React.FC = ({ children }) => (
-  <StyledPage>
-    <StyledMain>{children}</StyledMain>
-  </StyledPage>
-)
 
 const StyledPage = styled.div`
   width: 100%;
@@ -19,4 +12,10 @@ const StyledMain = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.topBarSize * 2}px);
 `
 
-export default Page
+export default function Page({ children }: { children: ReactNode }) {
+  return (
+    <StyledPage>
+      <StyledMain>{children}</StyledMain>
+    </StyledPage>
+  )
+}

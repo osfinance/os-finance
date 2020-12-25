@@ -1,8 +1,5 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
-
-// eslint-disable-next-line react/prop-types
-const Card: React.FC = ({ children }) => <StyledCard>{children}</StyledCard>
 
 const StyledCard = styled.div`
   background: ${({ theme }) => theme.grey200};
@@ -14,4 +11,6 @@ const StyledCard = styled.div`
   flex-direction: column;
 `
 
-export default Card
+export default function Card({ children }: { children: ReactNode }) {
+  return <StyledCard>{children}</StyledCard>
+}

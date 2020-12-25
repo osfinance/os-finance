@@ -3,25 +3,6 @@ import styled from 'styled-components'
 
 import Container from '../Container'
 
-interface PageHeaderProps {
-  icon: React.ReactNode
-  subtitle?: string
-  title?: string
-}
-
-// eslint-disable-next-line react/prop-types
-const PageHeader: React.FC<PageHeaderProps> = ({ icon, subtitle, title }) => {
-  return (
-    <Container size="sm">
-      <StyledPageHeader>
-        <StyledIcon>{icon}</StyledIcon>
-        <StyledTitle>{title}</StyledTitle>
-        <StyledSubtitle>{subtitle}</StyledSubtitle>
-      </StyledPageHeader>
-    </Container>
-  )
-}
-
 const StyledPageHeader = styled.div`
   align-items: center;
   box-sizing: border-box;
@@ -57,4 +38,20 @@ const StyledSubtitle = styled.h3`
   text-align: center;
 `
 
-export default PageHeader
+interface PageHeaderProps {
+  icon: React.ReactNode
+  subtitle?: string
+  title?: string
+}
+
+export default function PageHeader({ icon, subtitle, title }: PageHeaderProps) {
+  return (
+    <Container size="sm">
+      <StyledPageHeader>
+        <StyledIcon>{icon}</StyledIcon>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledSubtitle>{subtitle}</StyledSubtitle>
+      </StyledPageHeader>
+    </Container>
+  )
+}

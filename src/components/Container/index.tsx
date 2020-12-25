@@ -1,13 +1,23 @@
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 
+interface StyledContainerProps {
+  width: number
+}
+
+const StyledContainer = styled.div<StyledContainerProps>`
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: ${({ width }) => width}px;
+  padding: 0 ${({ theme }) => theme.spacing[4]}px;
+  width: 100%;
+`
 interface ContainerProps {
   children?: React.ReactNode
   size?: 'sm' | 'md' | 'lg'
 }
 
-// eslint-disable-next-line react/prop-types
-const Container: React.FC<ContainerProps> = ({ children, size = 'md' }) => {
+export default function Container({ children, size = 'md' }: ContainerProps) {
   const { siteWidth } = useContext(ThemeContext)
   let width: number
   switch (size) {
@@ -23,17 +33,3 @@ const Container: React.FC<ContainerProps> = ({ children, size = 'md' }) => {
   }
   return <StyledContainer width={width}>{children}</StyledContainer>
 }
-
-interface StyledContainerProps {
-  width: number
-}
-
-const StyledContainer = styled.div<StyledContainerProps>`
-  box-sizing: border-box;
-  margin: 0 auto;
-  max-width: ${({ width }) => width}px;
-  padding: 0 ${({ theme }) => theme.spacing[4]}px;
-  width: 100%;
-`
-
-export default Container

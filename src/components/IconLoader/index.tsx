@@ -2,22 +2,6 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import CardIcon from '../CardIcon'
 
-interface LoaderProps {
-  text?: string
-}
-
-// eslint-disable-next-line react/prop-types
-const Loader: React.FC<LoaderProps> = ({ text }) => {
-  return (
-    <StyledLoader>
-      <CardIcon>
-        <StyledYam>🦄</StyledYam>
-      </CardIcon>
-      {!!text && <StyledText>{text}</StyledText>}
-    </StyledLoader>
-  )
-}
-
 const spin = keyframes`
   0% {
     transform: rotate(0deg);
@@ -44,4 +28,17 @@ const StyledText = styled.div`
   color: ${({ theme }) => theme.grey400};
 `
 
-export default Loader
+interface LoaderProps {
+  text?: string
+}
+
+export default function Loader({ text }: LoaderProps) {
+  return (
+    <StyledLoader>
+      <CardIcon>
+        <StyledYam>🦄</StyledYam>
+      </CardIcon>
+      {!!text && <StyledText>{text}</StyledText>}
+    </StyledLoader>
+  )
+}
