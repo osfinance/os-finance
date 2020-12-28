@@ -20,6 +20,12 @@ import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
+import {
+  COMPTROLLER_ABI,
+  CHAINLINK_PRICE_ORACLE_PROXY_ABI,
+  COMPTROLLER_ADDRESSES,
+  ORACLE_ADDRESSES
+} from '../constants/lend'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 
@@ -36,6 +42,16 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
       return null
     }
   }, [address, ABI, library, withSignerIfPossible, account])
+}
+
+export function useComptrollerContract(): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId && COMPTROLLER_ADDRESSES[chainId], COMPTROLLER_ABI, false)
+}
+
+export function useOracleContract(): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId && ORACLE_ADDRESSES[chainId], CHAINLINK_PRICE_ORACLE_PROXY_ABI, false)
 }
 
 export function useV1FactoryContract(): Contract | null {

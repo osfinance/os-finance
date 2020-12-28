@@ -45,6 +45,9 @@ export interface Colors {
   yellow2: Color
   blue1: Color
 
+  // skeleton screen
+  SkeletonBG: string
+
   // farms
   green500: Color
   red100: Color

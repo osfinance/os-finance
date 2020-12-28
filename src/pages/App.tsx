@@ -33,6 +33,7 @@ import Vote from './Vote'
 import VotePage from './Vote/VotePage'
 import Home from './Home'
 import { RedirectPathToHomeOnly } from './Home/redirects'
+import Lend from './Lend'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -93,6 +94,7 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/home" component={Home} />
+              <Route exact strict path="/compound/lending" component={Lend} />
               <Route exact strict path="/uniswap/swap" component={Swap} />
               <Route exact strict path="/uniswap/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/uniswap/swap/:outputCurrency" component={RedirectToSwap} />

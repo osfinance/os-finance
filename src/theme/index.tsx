@@ -85,6 +85,11 @@ export function colors(darkMode: boolean): Colors {
     // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
 
+    // skeleton screen
+    SkeletonBG: darkMode
+      ? 'linear-gradient(to right, rgba(20, 30, 39, 0.7) 8%, #141e27 18%, rgba(20, 30, 39, 0.7) 33%)'
+      : 'linear-gradient(to right, #f6f6f6 8%, #f0f0f0 18%, #f6f6f6 33%)',
+
     // farms
     green500: '#00D110',
     red100: '#FFFDFE',
