@@ -1,9 +1,17 @@
-import React from 'react'
-import { Redirect, RouteComponentProps } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Redirect, RouteComponentProps, useRouteMatch } from 'react-router-dom'
 import AddLiquidity from './index'
 
 export function RedirectToAddLiquidity() {
-  return <Redirect to="/uniswap/add/" />
+  const [pathName, setPathName] = useState<string>('')
+  const router = useRouteMatch().url;
+
+  useEffect(() => {
+    if (router) {
+      setPathName(router)
+    }
+  }, [router])
+  return <Redirect to={pathName} />
 }
 
 const OLD_PATH_STRUCTURE = /^(0x[a-fA-F0-9]{40})-(0x[a-fA-F0-9]{40})$/
@@ -13,9 +21,18 @@ export function RedirectOldAddLiquidityPathStructure(props: RouteComponentProps<
       params: { currencyIdA }
     }
   } = props
+  const [pathName, setPathName] = useState<string>('')
+  const router = useRouteMatch().url;
+
+  useEffect(() => {
+    if (router) {
+      setPathName(router)
+    }
+  }, [router])
+
   const match = currencyIdA.match(OLD_PATH_STRUCTURE)
   if (match?.length) {
-    return <Redirect to={`/uniswap/add/${match[1]}/${match[2]}`} />
+    return <Redirect to={`${pathName}${match[1]}/${match[2]}`} />
   }
 
   return <AddLiquidity {...props} />
@@ -27,8 +44,17 @@ export function RedirectDuplicateTokenIds(props: RouteComponentProps<{ currencyI
       params: { currencyIdA, currencyIdB }
     }
   } = props
+  const [pathName, setPathName] = useState<string>('')
+  const router = useRouteMatch().url;
+
+  useEffect(() => {
+    if (router) {
+      setPathName(router)
+    }
+  }, [router])
+
   if (currencyIdA.toLowerCase() === currencyIdB.toLowerCase()) {
-    return <Redirect to={`/uniswap/add/${currencyIdA}`} />
+    return <Redirect to={`${pathName}${currencyIdA}`} />
   }
   return <AddLiquidity {...props} />
 }

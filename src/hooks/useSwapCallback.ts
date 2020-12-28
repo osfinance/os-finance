@@ -46,7 +46,8 @@ type EstimatedSwapCall = SuccessfulCall | FailedCall
 function useSwapCallArguments(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  router: string
 ): SwapCall[] {
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -61,7 +62,7 @@ function useSwapCallArguments(
     if (!trade || !recipient || !library || !account || !tradeVersion || !chainId || !deadline) return []
 
     const contract: Contract | null =
-      tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+      tradeVersion === Version.v2 ? getRouterContract(chainId, library, account, router) : v1Exchange
     if (!contract) {
       return []
     }
@@ -109,11 +110,12 @@ function useSwapCallArguments(
 export function useSwapCallback(
   trade: Trade | undefined, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
-  recipientAddressOrName: string | null // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  recipientAddressOrName: string | null, // the ENS name or address of the recipient of the trade, or null if swap should be returned to sender
+  router: string
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName)
+  const swapCalls = useSwapCallArguments(trade, allowedSlippage, recipientAddressOrName, router)
 
   const addTransaction = useTransactionAdder()
 
