@@ -9,6 +9,7 @@ import { isAddress } from '../../utils'
 import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
 import { useUserUnclaimedAmount } from '../claim/hooks'
 import { useTotalUniEarned } from '../stake/hooks'
+import { CToken } from 'data/CToken'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -83,11 +84,76 @@ export function useTokenBalancesWithLoadingIndicator(
   ]
 }
 
+export function useCTokenBalancesWithLoadingIndicator(
+  address?: string,
+  tokens?: (CToken | undefined)[]
+): [{ [tokenAddress: string]: TokenAmount | undefined }, boolean] {
+  const multicallContract = useMulticallContract()
+
+  const uncheckedAddresses = address ? [address] : []
+
+  const accounts: string[] = useMemo(
+    () =>
+      uncheckedAddresses
+        ? uncheckedAddresses
+            .map(isAddress)
+            .filter((a): a is string => a !== false)
+            .sort()
+        : [],
+    [uncheckedAddresses]
+  )
+
+  const validatedTokens: CToken[] = useMemo(
+    () => tokens?.filter((t?: CToken): t is CToken => isAddress(t?.address) !== false) ?? [],
+    [tokens]
+  )
+
+  const validatedTokenAddresses = useMemo(() => validatedTokens.map(vt => vt.address), [validatedTokens])
+
+  const ethBalance = useSingleContractMultipleData(
+    multicallContract,
+    'getEthBalance',
+    accounts.map(account => [account])
+  )
+
+  const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'balanceOf', [address])
+
+  const anyLoading: boolean = useMemo(
+    () => ethBalance.some(callState => callState.loading) && balances.some(callState => callState.loading),
+    [balances, ethBalance]
+  )
+
+  return [
+    useMemo(
+      () =>
+        address && validatedTokens.length > 0
+          ? validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
+              const value = token.isETH() ? ethBalance?.[0]?.result?.[0] : balances?.[i]?.result?.[0]
+              const amount = value ? JSBI.BigInt(value.toString()) : undefined
+              if (amount) {
+                memo[token.address] = new TokenAmount(token, amount)
+              }
+              return memo
+            }, {})
+          : {},
+      [address, validatedTokens, ethBalance, balances]
+    ),
+    anyLoading
+  ]
+}
+
 export function useTokenBalances(
   address?: string,
   tokens?: (Token | undefined)[]
 ): { [tokenAddress: string]: TokenAmount | undefined } {
   return useTokenBalancesWithLoadingIndicator(address, tokens)[0]
+}
+
+export function useCTokenBalances(
+  address?: string,
+  tokens?: (CToken | undefined)[]
+): { [tokenAddress: string]: TokenAmount | undefined } {
+  return useCTokenBalancesWithLoadingIndicator(address, tokens)[0]
 }
 
 // get the balance for a single token/account combo
