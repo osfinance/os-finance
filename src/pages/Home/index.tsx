@@ -18,7 +18,7 @@ export default function Home() {
             <PageHeader
               icon={<img src={farmer} height="96" alt={'home'} />}
               subtitle="Create Your Favorite Defi Project."
-              title="OS Finance."
+              title="OS Finance"
             />
             <HomeCards />
           </Route>

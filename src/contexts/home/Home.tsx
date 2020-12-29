@@ -4,39 +4,39 @@ import Context from './context'
 import { Home as HOME_DEX } from './types'
 
 const NAME_FOR_DEX: { [key: string]: string } = {
-  // YAM_DEX: 'Yam Farm',
   UNISWAP_DEX: 'Uniswap',
-  COMPOUND_DEX: 'Compound'
+  COMPOUND_DEX: 'Compound',
+  SUSHISWAP_DEX: 'Sushiswap'
 }
 
 const ICON_FOR_DEX: { [key: string]: string } = {
-  // YAM_DEX: '👨‍🌾',
   UNISWAP_DEX: '🦄',
-  COMPOUND_DEX: '👨‍🌾'
+  COMPOUND_DEX: '👨‍🌾',
+  SUSHISWAP_DEX: '🍣'
 }
 
 const HOME_FOR_DEX: { [key: string]: string } = {
-  // YAM_DEX: '/farms',
   UNISWAP_DEX: '/swap',
-  COMPOUND_DEX: '/lending'
+  COMPOUND_DEX: '/lending',
+  SUSHISWAP_DEX: '/swap'
 }
 
 const SORT_FOR_DEX: { [key: string]: number } = {
-  // YAM_DEX: 0,
   UNISWAP_DEX: 1,
-  COMPOUND_DEX: 2
+  COMPOUND_DEX: 2,
+  SUSHISWAP_DEX: 3
 }
 
 const DESCRIPTION_FOR_DEX: { [key: string]: string } = {
-  // YAM_DEX: 0,
   UNISWAP_DEX: 'Uniswap is a decentralized cryptocurrency exchange which through use of smart contracts.',
-  COMPOUND_DEX: 'Compound Supply or borrow assets from the protocol, and participate in community governance.'
+  COMPOUND_DEX: 'Compound supply or borrow assets from the protocol, and participate in community governance.',
+  SUSHISWAP_DEX: 'SushiSwap is an automated market making decentralized exchange currently on the Ethereum blockchain.'
 }
 
 const HIGHLIGHT_FOR_DEX: { [key: string]: boolean } = {
-  // YAM_DEX: false,
-  UNISWAP_DEX: true,
-  COMPOUND_DEX: false
+  UNISWAP_DEX: false,
+  COMPOUND_DEX: false,
+  SUSHISWAP_DEX: false
 }
 
 export default function Home({ children }: { children: ReactNode }) {
