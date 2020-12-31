@@ -30,6 +30,7 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
+import { PageFields } from 'data/Reserves'
 
 const HeaderFrame = styled.div`
   display: grid;
