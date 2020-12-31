@@ -30,6 +30,7 @@ import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from 'hooks/usePrevious'
 import { CountUp } from 'use-count-up'
+import { PageFields } from 'data/Reserves'
 
 const HeaderFrame = styled.div`
   display: grid;
