@@ -78,7 +78,7 @@ export default function Pool() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
 
-  const router: string = useRouteMatch().url.split('/')[1]
+  const pathName: string = useRouteMatch().url.split('/')[1]
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPairs = useTrackedTokenPairs()
@@ -125,6 +125,9 @@ export default function Pool() {
     )
   })
 
+  const sushiswapVision = 'https://sushiswap.vision/'
+  const uniswapInfo = 'https://uniswap.info/'
+
   return (
     <>
       <PageWrapper>
@@ -164,7 +167,7 @@ export default function Pool() {
                 </TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to={`/${router}/create/ETH`}>
+                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to={`/${pathName}/create/ETH`}>
                   Create a pair
                 </ResponsiveButtonSecondary>
                 <ResponsiveButtonPrimary
@@ -172,7 +175,7 @@ export default function Pool() {
                   as={Link}
                   padding="6px 8px"
                   borderRadius="12px"
-                  to={`/${router}/add/ETH`}
+                  to={`/${pathName}/add/ETH`}
                 >
                   <Text fontWeight={500} fontSize={16}>
                     Add Liquidity
@@ -197,7 +200,9 @@ export default function Pool() {
               <>
                 <ButtonSecondary>
                   <RowBetween>
-                    <ExternalLink href={'https://uniswap.info/account/' + account}>
+                    <ExternalLink
+                      href={`${pathName} === 'sushiswap' ? ${sushiswapVision} : ${uniswapInfo}account/${account}${account}`}
+                    >
                       Account analytics and accrued fees
                     </ExternalLink>
                     <span> ↗</span>
@@ -228,7 +233,10 @@ export default function Pool() {
             <AutoColumn justify={'center'} gap="md">
               <Text textAlign="center" fontSize={14} style={{ padding: '.5rem 0 .5rem 0' }}>
                 {hasV1Liquidity ? 'Uniswap V1 liquidity found!' : "Don't see a pool you joined?"}{' '}
-                <StyledInternalLink id="import-pool-link" to={hasV1Liquidity ? '/migrate/v1' : '/find'}>
+                <StyledInternalLink
+                  id="import-pool-link"
+                  to={hasV1Liquidity ? '/uniswap/migrate/v1' : `/${pathName}/find`}
+                >
                   {hasV1Liquidity ? 'Migrate now.' : 'Import it.'}
                 </StyledInternalLink>
               </Text>
