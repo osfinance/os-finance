@@ -1,5 +1,11 @@
 // the Uniswap Default token list lives here
-export const DEFAULT_TOKEN_LIST_URL = 'tokens.uniswap.eth'
+export const DEFAULT_TOKEN_LIST_URL = {
+  uniswap: 'tokens.uniswap.eth',
+  sushiswap: 'https://raw.githubusercontent.com/sushiswapclassic/token-list/master/sushiswap.tokenlist.json'
+}
+// the SushiSwap Default token list lives here
+export const SUSHISWAP_DEFAULT_TOKEN_LIST_URL =
+  'https://raw.githubusercontent.com/sushiswapclassic/token-list/master/sushiswap.tokenlist.json'
 
 // used to mark unsupported tokens, these are hosted lists of unsupported tokens
 /**

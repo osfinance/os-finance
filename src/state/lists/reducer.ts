@@ -8,13 +8,16 @@ import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disa
 
 export interface ListsState {
   readonly byUrl: {
-    readonly [url: string]: {
-      readonly current: TokenList | null
-      readonly pendingUpdate: TokenList | null
-      readonly loadingRequestId: string | null
-      readonly error: string | null
+    readonly [pathName: string]: {
+      readonly [url: string]: {
+        readonly current: TokenList | null
+        readonly pendingUpdate: TokenList | null
+        readonly loadingRequestId: string | null
+        readonly error: string | null
+      }
     }
   }
+
   // this contains the default list of lists from the last time the updateVersion was called, i.e. the app was reloaded
   readonly lastInitializedDefaultListOfLists?: string[]
 
@@ -22,7 +25,7 @@ export interface ListsState {
   readonly activeListUrls: string[] | undefined
 }
 
-type ListState = ListsState['byUrl'][string]
+type ListState = ListsState['byUrl'][string][string] // ['byUrl'][pathName][url]
 
 const NEW_LIST_STATE: ListState = {
   error: null,
@@ -36,28 +39,36 @@ type Mutable<T> = { -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U
 const initialState: ListsState = {
   lastInitializedDefaultListOfLists: DEFAULT_LIST_OF_LISTS,
   byUrl: {
-    ...DEFAULT_LIST_OF_LISTS.reduce<Mutable<ListsState['byUrl']>>((memo, listUrl) => {
-      memo[listUrl] = NEW_LIST_STATE
-      return memo
-    }, {})
+    uniswap: {
+      ...DEFAULT_LIST_OF_LISTS.uniswap.reduce<Mutable<ListsState['byUrl']['uniswap']>>((memo, listUrl) => {
+        memo[listUrl] = NEW_LIST_STATE
+        return memo
+      }, {})
+    },
+    sushiswap: {
+      ...DEFAULT_LIST_OF_LISTS.sushiswap.reduce<Mutable<ListsState['byUrl']['sushiswap']>>((memo, listUrl) => {
+        memo[listUrl] = NEW_LIST_STATE
+        return memo
+      }, {})
+    }
   },
   activeListUrls: DEFAULT_ACTIVE_LIST_URLS
 }
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(fetchTokenList.pending, (state, { payload: { requestId, url } }) => {
-      state.byUrl[url] = {
+    .addCase(fetchTokenList.pending, (state, { payload: { requestId, pathName, url } }) => {
+      state.byUrl[pathName][url] = {
         current: null,
         pendingUpdate: null,
-        ...state.byUrl[url],
+        ...state.byUrl[pathName][url],
         loadingRequestId: requestId,
         error: null
       }
     })
-    .addCase(fetchTokenList.fulfilled, (state, { payload: { requestId, tokenList, url } }) => {
-      const current = state.byUrl[url]?.current
-      const loadingRequestId = state.byUrl[url]?.loadingRequestId
+    .addCase(fetchTokenList.fulfilled, (state, { payload: { requestId, tokenList, pathName, url } }) => {
+      const current = state.byUrl[pathName][url]?.current
+      const loadingRequestId = state.byUrl[pathName][url]?.loadingRequestId
 
       // no-op if update does nothing
       if (current) {
@@ -65,8 +76,8 @@ export default createReducer(initialState, builder =>
 
         if (upgradeType === VersionUpgrade.NONE) return
         if (loadingRequestId === null || loadingRequestId === requestId) {
-          state.byUrl[url] = {
-            ...state.byUrl[url],
+          state.byUrl[pathName][url] = {
+            ...state.byUrl[pathName][url],
             loadingRequestId: null,
             error: null,
             current: current,
@@ -74,8 +85,8 @@ export default createReducer(initialState, builder =>
           }
         }
       } else {
-        state.byUrl[url] = {
-          ...state.byUrl[url],
+        state.byUrl[pathName][url] = {
+          ...state.byUrl[pathName][url],
           loadingRequestId: null,
           error: null,
           current: tokenList,
@@ -83,14 +94,14 @@ export default createReducer(initialState, builder =>
         }
       }
     })
-    .addCase(fetchTokenList.rejected, (state, { payload: { url, requestId, errorMessage } }) => {
-      if (state.byUrl[url]?.loadingRequestId !== requestId) {
+    .addCase(fetchTokenList.rejected, (state, { payload: { url, requestId, pathName, errorMessage } }) => {
+      if (state.byUrl[pathName][url]?.loadingRequestId !== requestId) {
         // no-op since it's not the latest request
         return
       }
 
-      state.byUrl[url] = {
-        ...state.byUrl[url],
+      state.byUrl[pathName][url] = {
+        ...state.byUrl[pathName][url],
         loadingRequestId: null,
         error: errorMessage,
         current: null,
@@ -102,9 +113,9 @@ export default createReducer(initialState, builder =>
         state.byUrl[url] = NEW_LIST_STATE
       }
     })
-    .addCase(removeList, (state, { payload: url }) => {
-      if (state.byUrl[url]) {
-        delete state.byUrl[url]
+    .addCase(removeList, (state, { payload: { pathName, url } }) => {
+      if (state.byUrl[pathName][url]) {
+        delete state.byUrl[pathName][url]
       }
       // remove list from active urls if needed
       if (state.activeListUrls && state.activeListUrls.includes(url)) {
@@ -129,14 +140,14 @@ export default createReducer(initialState, builder =>
         state.activeListUrls = state.activeListUrls.filter(u => u !== url)
       }
     })
-    .addCase(acceptListUpdate, (state, { payload: url }) => {
-      if (!state.byUrl[url]?.pendingUpdate) {
+    .addCase(acceptListUpdate, (state, { payload: { pathName, url } }) => {
+      if (!state.byUrl[pathName][url]?.pendingUpdate) {
         throw new Error('accept list update called without pending update')
       }
-      state.byUrl[url] = {
-        ...state.byUrl[url],
+      state.byUrl[pathName][url] = {
+        ...state.byUrl[pathName][url],
         pendingUpdate: null,
-        current: state.byUrl[url].pendingUpdate
+        current: state.byUrl[pathName][url].pendingUpdate
       }
     })
     .addCase(updateVersion, state => {
@@ -145,22 +156,41 @@ export default createReducer(initialState, builder =>
         state.byUrl = initialState.byUrl
         state.activeListUrls = initialState.activeListUrls
       } else if (state.lastInitializedDefaultListOfLists) {
-        const lastInitializedSet = state.lastInitializedDefaultListOfLists.reduce<Set<string>>(
-          (s, l) => s.add(l),
-          new Set()
-        )
-        const newListOfListsSet = DEFAULT_LIST_OF_LISTS.reduce<Set<string>>((s, l) => s.add(l), new Set())
-
-        DEFAULT_LIST_OF_LISTS.forEach(listUrl => {
-          if (!lastInitializedSet.has(listUrl)) {
-            state.byUrl[listUrl] = NEW_LIST_STATE
+        let lastInitializedSet: Set<string> = new Set()
+        Object.keys(state.lastInitializedDefaultListOfLists).map(listKey => {
+          const list = state.lastInitializedDefaultListOfLists?.[listKey as 'uniswap' | 'sushiswap'].reduce<
+            Set<string>
+          >((s, l) => s.add(l), new Set())
+          if (list) {
+            lastInitializedSet = new Set([...lastInitializedSet, ...list])
           }
         })
 
-        state.lastInitializedDefaultListOfLists.forEach(listUrl => {
-          if (!newListOfListsSet.has(listUrl)) {
-            delete state.byUrl[listUrl]
+        let newListOfListsSet: Set<string> = new Set()
+        Object.keys(DEFAULT_LIST_OF_LISTS).map(listKey => {
+          const list = DEFAULT_LIST_OF_LISTS?.[listKey as 'uniswap' | 'sushiswap'].reduce<Set<string>>(
+            (s, l) => s.add(l),
+            new Set()
+          )
+          if (list) {
+            newListOfListsSet = new Set([...newListOfListsSet, ...list])
           }
+        })
+
+        Object.keys(DEFAULT_LIST_OF_LISTS).map(listKey =>
+          DEFAULT_LIST_OF_LISTS[listKey as 'uniswap' | 'sushiswap'].forEach(listUrl => {
+            if (!lastInitializedSet.has(listUrl)) {
+              state.byUrl[listKey][listUrl] = NEW_LIST_STATE
+            }
+          })
+        )
+
+        Object.keys(state.lastInitializedDefaultListOfLists).map(listKey => {
+          state.lastInitializedDefaultListOfLists?.[listKey as 'uniswap' | 'sushiswap'].forEach(listUrl => {
+            if (!newListOfListsSet.has(listUrl)) {
+              delete state.byUrl[listKey][listUrl]
+            }
+          })
         })
       }
 

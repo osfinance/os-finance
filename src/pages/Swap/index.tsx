@@ -54,7 +54,8 @@ export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
-  const router: string = useRouteMatch().url.split('/')[1]
+  const location = useLocation()
+  const router = location.pathname.split('/')[1]
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId)
