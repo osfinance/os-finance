@@ -17,6 +17,7 @@ export interface ListsState {
       }
     }
   }
+
   // this contains the default list of lists from the last time the updateVersion was called, i.e. the app was reloaded
   readonly lastInitializedDefaultOsListOfLists?: { uniswap: string[]; sushiswap: string[] }
 

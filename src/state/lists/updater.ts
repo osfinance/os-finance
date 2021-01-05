@@ -27,14 +27,12 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
   const fetchList = useFetchListCallback(pathName)
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
-    Object.keys(lists).forEach(url =>
+    Object.keys(lists[pathName]).forEach(url =>
       fetchList(url).catch(error => console.debug('interval list fetching error', error))
     )
-  }, [fetchList, isWindowVisible, lists])
-
+  }, [fetchList, isWindowVisible, lists, pathName])
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
-
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
     Object.keys(lists).forEach(listUrl => {
@@ -43,8 +41,7 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
         fetchList(listUrl).catch(error => console.debug('list added fetching error', error))
       }
     })
-  }, [dispatch, fetchList, library, lists])
-
+  }, [dispatch, fetchList, library, lists, pathName])
   // automatically update lists if versions are minor/patch
   useEffect(() => {
     Object.keys(lists).forEach(listUrl => {
@@ -66,7 +63,6 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
               )
             }
             break
-
           case VersionUpgrade.MAJOR:
             // accept update if list is active or list in background
             if (activeListUrls?.includes(listUrl) || UNSUPPORTED_LIST_URLS[pathName].includes(listUrl)) {
