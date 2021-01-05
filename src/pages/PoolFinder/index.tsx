@@ -1,6 +1,7 @@
 import { Currency, ETHER, JSBI, TokenAmount } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
+import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ButtonDropdownLight } from '../../components/Button'
 import { LightCard } from '../../components/Card'
