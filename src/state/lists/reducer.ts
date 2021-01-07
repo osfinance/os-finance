@@ -157,18 +157,19 @@ export default createReducer(initialState, builder =>
         state.activeListUrls = initialState.activeListUrls
       } else if (state.lastInitializedDefaultListOfLists) {
         let lastInitializedSet: Set<string> = new Set()
-        Object.keys(state.lastInitializedDefaultListOfLists).map(listKey => {
-          const list = state.lastInitializedDefaultListOfLists?.[listKey as 'uniswap' | 'sushiswap'].reduce<
-            Set<string>
-          >((s, l) => s.add(l), new Set())
+        Object.keys(state.lastInitializedDefaultListOfLists).forEach(listKey => {
+          const list = state.lastInitializedDefaultListOfLists?.[listKey as PathNameType].reduce<Set<string>>(
+            (s, l) => s.add(l),
+            new Set()
+          )
           if (list) {
             lastInitializedSet = new Set([...lastInitializedSet, ...list])
           }
         })
 
         let newListOfListsSet: Set<string> = new Set()
-        Object.keys(DEFAULT_LIST_OF_LISTS).map(listKey => {
-          const list = DEFAULT_LIST_OF_LISTS?.[listKey as 'uniswap' | 'sushiswap'].reduce<Set<string>>(
+        Object.keys(DEFAULT_LIST_OF_LISTS).forEach(listKey => {
+          const list = DEFAULT_LIST_OF_LISTS?.[listKey as PathNameType].reduce<Set<string>>(
             (s, l) => s.add(l),
             new Set()
           )
@@ -178,15 +179,15 @@ export default createReducer(initialState, builder =>
         })
 
         Object.keys(DEFAULT_LIST_OF_LISTS).map(listKey =>
-          DEFAULT_LIST_OF_LISTS[listKey as 'uniswap' | 'sushiswap'].forEach(listUrl => {
+          DEFAULT_LIST_OF_LISTS[listKey as PathNameType].forEach(listUrl => {
             if (!lastInitializedSet.has(listUrl)) {
               state.byUrl[listKey][listUrl] = NEW_LIST_STATE
             }
           })
         )
 
-        Object.keys(state.lastInitializedDefaultListOfLists).map(listKey => {
-          state.lastInitializedDefaultListOfLists?.[listKey as 'uniswap' | 'sushiswap'].forEach(listUrl => {
+        Object.keys(state.lastInitializedDefaultListOfLists).forEach(listKey => {
+          state.lastInitializedDefaultListOfLists?.[listKey as PathNameType].forEach(listUrl => {
             if (!newListOfListsSet.has(listUrl)) {
               delete state.byUrl[listKey][listUrl]
             }
