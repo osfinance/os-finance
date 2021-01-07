@@ -12,7 +12,7 @@ import { acceptListUpdate } from './actions'
 import { useActiveListUrls } from './hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 
-export default function Updater({ pathName }: { pathName: 'uniswap' | 'sushiswap' }): null {
+export default function Updater({ pathName }: { pathName: PathNameType }): null {
   const { library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   const isWindowVisible = useIsWindowVisible()
