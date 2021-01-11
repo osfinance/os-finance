@@ -1,6 +1,7 @@
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals } from '@uniswap/sdk'
 import { useMemo } from 'react'
+import { CToken, useCTokens } from '../data/CToken'
 import { useSelectedTokenList } from '../state/lists/hooks'
 import { NEVER_RELOAD, useSingleCallResult } from '../state/multicall/hooks'
 import { useUserAddedTokens } from '../state/user/hooks'
@@ -8,11 +9,16 @@ import { isAddress } from '../utils'
 
 import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
+import { arrayify } from 'ethers/lib/utils'
+import { useLocation } from 'react-router-dom'
 
 export function useAllTokens(): { [address: string]: Token } {
   const { chainId } = useActiveWeb3React()
   const userAddedTokens = useUserAddedTokens()
-  const allTokens = useSelectedTokenList()
+  const location = useLocation()
+  const router = location.pathname.split('/')[1]
+  const pathName = router === 'uniswap' || router === 'sushiswap' ? router : 'uniswap'
+  const allTokens = useSelectedTokenList(pathName)
 
   return useMemo(() => {
     if (!chainId) return {}
@@ -32,6 +38,25 @@ export function useAllTokens(): { [address: string]: Token } {
   }, [chainId, userAddedTokens, allTokens])
 }
 
+export function useAllCTokens(): { [address: string]: CToken } {
+  const { chainId } = useActiveWeb3React()
+  const allCTokens = useCTokens()
+
+  return useMemo(() => {
+    if (!chainId) return {}
+    const data = allCTokens.map((item: any) => {
+      return {
+        ...item?.[1]
+      }
+    })
+    const allData: any = {}
+    data.forEach((item: CToken) => {
+      allData[item.address] = { ...item }
+    })
+    return allData
+  }, [chainId, allCTokens])
+}
+
 // Check if currency is included in custom list from user storage
 export function useIsUserAddedToken(currency: Currency): boolean {
   const userAddedTokens = useUserAddedTokens()
@@ -40,10 +65,12 @@ export function useIsUserAddedToken(currency: Currency): boolean {
 
 // parse a name or symbol from a token response
 const BYTES32_REGEX = /^0x[a-fA-F0-9]{64}$/
+
 function parseStringOrBytes32(str: string | undefined, bytes32: string | undefined, defaultValue: string): string {
   return str && str.length > 0
     ? str
-    : bytes32 && BYTES32_REGEX.test(bytes32)
+    : // need to check for proper bytes string and valid terminator
+    bytes32 && BYTES32_REGEX.test(bytes32) && arrayify(bytes32)[31] === 0
     ? parseBytes32String(bytes32)
     : defaultValue
 }
