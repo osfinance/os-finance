@@ -5,28 +5,28 @@ import { updateVersion } from '../global/actions'
 import { fetchTokenList, acceptListUpdate, addList, removeList, enableList } from './actions'
 import reducer, { ListsState } from './reducer'
 
-// const STUB_TOKEN_LIST = {
-//   name: '',
-//   timestamp: '',
-//   version: { major: 1, minor: 1, patch: 1 },
-//   tokens: []
-// }
+const STUB_TOKEN_LIST = {
+  name: '',
+  timestamp: '',
+  version: { major: 1, minor: 1, patch: 1 },
+  tokens: []
+}
 
-// const PATCHED_STUB_LIST = {
-//   ...STUB_TOKEN_LIST,
-//   version: { ...STUB_TOKEN_LIST.version, patch: STUB_TOKEN_LIST.version.patch + 1 }
-// }
-// const MINOR_UPDATED_STUB_LIST = {
-//   ...STUB_TOKEN_LIST,
-//   version: { ...STUB_TOKEN_LIST.version, minor: STUB_TOKEN_LIST.version.minor + 1 }
-// }
-// const MAJOR_UPDATED_STUB_LIST = {
-//   ...STUB_TOKEN_LIST,
-//   version: { ...STUB_TOKEN_LIST.version, major: STUB_TOKEN_LIST.version.major + 1 }
-// }
+const PATCHED_STUB_LIST = {
+  ...STUB_TOKEN_LIST,
+  version: { ...STUB_TOKEN_LIST.version, patch: STUB_TOKEN_LIST.version.patch + 1 }
+}
+const MINOR_UPDATED_STUB_LIST = {
+  ...STUB_TOKEN_LIST,
+  version: { ...STUB_TOKEN_LIST.version, minor: STUB_TOKEN_LIST.version.minor + 1 }
+}
+const MAJOR_UPDATED_STUB_LIST = {
+  ...STUB_TOKEN_LIST,
+  version: { ...STUB_TOKEN_LIST.version, major: STUB_TOKEN_LIST.version.major + 1 }
+}
 
-// describe('list reducer', () => {
-//   let store: Store<ListsState>
+describe('list reducer', () => {
+  let store: Store<ListsState>
 
   beforeEach(() => {
     store = createStore(reducer, {
