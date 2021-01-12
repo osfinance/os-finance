@@ -168,5 +168,22 @@
   "transactionSubmitted": "Transaction Submitted",
   "close": "Close",
   "tokenInsufficientLiquidity": "Insufficient liquidity",
-  "exceedBorrowBalance": "Exceed borrow balance"
+  "exceedBorrowBalance": "Exceed borrow balance",
+  "transactionSettings": "Transaction Settings",
+  "toggleExpertMode": "Toggle Expert Mode",
+  "expertModeQuestionHelper": "Bypasses confirmation modals and allows high slippage trades. Use at your own risk.",
+  "slippageTolerance": "Slippage Tolerance",
+  "slippageQuestionHelper": "Your transaction will revert if the price changes unfavorably by more than this percentage.",
+  "transactionDeadline": "Transaction deadline",
+  "minutes": "minutes",
+  "deadlineQuestionHelper": "Your transaction will revert if it is pending for more than this long.",
+  "validSlippagePercentage": "Enter a valid slippage percentage",
+  "transactionMayFail": "Your transaction may fail",
+  "transactionMayFrontrun": "Your transaction may be frontrun",
+  "areYouSure": "Are you sure?",
+  "turnOnExpertModeQuestionHelper": "Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result in bad rates and lost funds.",
+  "expertModeUsageNotice": "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.",
+  "confirm": "confirm",
+  "confirmExpertMode": "Please type the word \"confirm\" to enable expert mode.",
+  "turnOnExpertMode": "Turn On Expert Mode"
 }

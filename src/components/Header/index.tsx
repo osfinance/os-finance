@@ -9,6 +9,7 @@ import styled from 'styled-components'
 
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import CompoundIcon from '../../assets/svg/logo_compound.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
@@ -180,6 +181,7 @@ const Title = styled.a`
   pointer-events: auto;
   justify-self: flex-start;
   margin-right: 12px;
+  text-decoration: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};

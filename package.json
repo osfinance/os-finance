@@ -1,6 +1,6 @@
 {
-  "name": "@deerfi/interface",
-  "description": "Deerfi Lending",
+  "name": "@osfinance/interface",
+  "description": "Osfinance Interface",
   "homepage": ".",
   "private": true,
   "devDependencies": {

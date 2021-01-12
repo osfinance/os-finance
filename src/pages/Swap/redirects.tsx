@@ -18,6 +18,21 @@ export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
   return <Redirect to={{ ...location, pathname: pathName }} />
 }
 
+// Redirects to uniswap but only replace the pathname
+export function RedirectPathToUniswapOnly({ location }: RouteComponentProps) {
+  return <Redirect to={{ ...location, pathname: '/uniswap/swap' }} />
+}
+
+// Redirects to sushiswap but only replace the pathname
+export function RedirectPathToSushiswapOnly({ location }: RouteComponentProps) {
+  return <Redirect to={{ ...location, pathname: '/sushiswap/swap' }} />
+}
+
+// Redirects to compound but only replace the pathname
+export function RedirectPathToCompoundOnly({ location }: RouteComponentProps) {
+  return <Redirect to={{ ...location, pathname: '/compound/lending' }} />
+}
+
 // Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format
 export function RedirectToSwap(props: RouteComponentProps<{ outputCurrency: string }>) {
   const {
