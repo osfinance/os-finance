@@ -9,6 +9,7 @@ import styled from 'styled-components'
 
 import Logo from '../../assets/svg/logo.png'
 import LogoDark from '../../assets/svg/logo_white.png'
+import CompoundIcon from '../../assets/svg/logo_compound.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
@@ -180,6 +181,7 @@ const Title = styled.a`
   pointer-events: auto;
   justify-self: flex-start;
   margin-right: 12px;
+  text-decoration: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -288,13 +290,6 @@ const EmojiIcon = styled.div`
   font-size: 26px;
   text-decoration: none;
 `
-
-export enum PageFields {
-  HOME = 'home',
-  UNISWAP = 'uniswap',
-  SUSHISWAP = 'sushiswap',
-  COMPOUND = 'compound'
-}
 
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
