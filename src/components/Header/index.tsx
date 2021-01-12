@@ -9,6 +9,7 @@ import styled from 'styled-components'
 
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
+import CompoundIcon from '../../assets/svg/logo_compound.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
@@ -180,6 +181,7 @@ const Title = styled.a`
   pointer-events: auto;
   justify-self: flex-start;
   margin-right: 12px;
+  text-decoration: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -255,6 +257,11 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   `}
 `
 
+const EmojiIcon = styled.div`
+  font-size: 26px;
+  text-decoration: none;
+`
+
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
@@ -276,9 +283,26 @@ export default function Header() {
     <HeaderFrame>
       <HeaderRow>
         <Title href=".">
-          <UniIcon>
-            <img width={'24px'} src={isDark ? LogoDark : Logo} alt="logo" />
-          </UniIcon>
+          {PageFields.HOME === page && (
+            <UniIcon>
+              <EmojiIcon role="img">{'😋'}</EmojiIcon>
+            </UniIcon>
+          )}
+          {PageFields.UNISWAP === page && (
+            <UniIcon>
+              <img width={'24px'} src={isDark ? LogoDark : Logo} alt="logo" />
+            </UniIcon>
+          )}
+          {PageFields.COMPOUND === page && (
+            <UniIcon>
+              <img width={'28px'} src={CompoundIcon} alt="logo" />
+            </UniIcon>
+          )}
+          {PageFields.SUSHISWAP === page && (
+            <UniIcon>
+              <EmojiIcon>{'🍣'}</EmojiIcon>
+            </UniIcon>
+          )}
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/home'}>
