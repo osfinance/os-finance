@@ -64,7 +64,7 @@ export default function Home({ children }: { children: ReactNode }) {
         console.log(e)
       }
     }
-    homeArr.sort((a, b) => (a.sort < b.sort ? 1 : -1))
+    homeArr.sort((a, b) => (a.sort > b.sort ? 1 : -1))
     setHome(homeArr)
   }, [setHome])
 

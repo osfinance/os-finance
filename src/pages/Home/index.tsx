@@ -1,6 +1,5 @@
 import React from 'react'
 import { Route, Switch, useRouteMatch } from 'react-router-dom'
-import farmer from '../../assets/img/farmer.png'
 
 import Page from '../../components/Page'
 import PageHeader from '../../components/PageHeader'
@@ -15,11 +14,7 @@ export default function Home() {
       <Page>
         <HomeProvider>
           <Route exact path={path}>
-            <PageHeader
-              icon={<img src={farmer} height="96" alt={'home'} />}
-              subtitle="Create Your Favorite Defi Project."
-              title="OS Finance"
-            />
+            <PageHeader icon={'😋'} subtitle="Create Your Favorite Defi Project." title="OS Finance" />
             <HomeCards />
           </Route>
         </HomeProvider>
