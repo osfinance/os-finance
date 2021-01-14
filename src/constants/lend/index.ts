@@ -116,7 +116,7 @@ const CTOKEN_LISTS: {
       'Compound Uniswap',
       'UNI',
       'Uniswap',
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xE41d2489571d322189246DaFA5ebDe1F4699F498/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
       ''
     ],
     [
@@ -127,7 +127,7 @@ const CTOKEN_LISTS: {
       'Compound Collateral',
       'COMP',
       'Compound',
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xE41d2489571d322189246DaFA5ebDe1F4699F498/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc00e94Cb662C3520282E6f5717214004A7f26888/logo.png',
       ''
     ]
   ],
