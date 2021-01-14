@@ -1,12 +1,20 @@
+import QuestionHelper from 'components/QuestionHelper'
+import TransactionSettings from 'components/TransactionSettings'
 import React, { useContext, useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
-import { useDarkModeManager, useExpertModeManager } from '../../state/user/hooks'
+import {
+  useDarkModeManager,
+  useExpertModeManager,
+  useUserSlippageTolerance,
+  useUserTransactionTTL
+} from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
@@ -123,7 +131,14 @@ export default function SettingsTab() {
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
 
+  const location = useLocation()
+  const page = location.pathname.split('/')[1]
+  const showTransactionSetting = page === 'uniswap' || page === 'sushiswap' ? true : false
+
   const theme = useContext(ThemeContext)
+  const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
+
+  const [ttl, setTtl] = useUserTransactionTTL()
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
 
@@ -143,31 +158,30 @@ export default function SettingsTab() {
             <RowBetween style={{ padding: '0 2rem' }}>
               <div />
               <Text fontWeight={500} fontSize={20}>
-                Are you sure?
+                {t('areYouSure')}
               </Text>
               <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
             </RowBetween>
             <Break />
             <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
               <Text fontWeight={500} fontSize={20}>
-                Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
-                in bad rates and lost funds.
+                {t('turnOnExpertModeQuestionHelper')}
               </Text>
               <Text fontWeight={600} fontSize={20}>
-                ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.
+                {t('expertModeUsageNotice')}
               </Text>
               <ButtonError
                 error={true}
                 padding={'12px'}
                 onClick={() => {
-                  if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
+                  if (window.prompt(t('confirmExpertMode')) === t('confirm')) {
                     toggleExpertMode()
                     setShowConfirmation(false)
                   }
                 }}
               >
                 <Text fontSize={20} fontWeight={500} id="confirm-expert-mode">
-                  Turn On Expert Mode
+                  {t('turnOnExpertMode')}
                 </Text>
               </ButtonError>
             </AutoColumn>
@@ -187,9 +201,45 @@ export default function SettingsTab() {
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
-            <Text fontWeight={600} fontSize={14}>
-              {t('interfaceSettings')}
-            </Text>
+            {showTransactionSetting ? (
+              <>
+                <Text fontWeight={600} fontSize={14}>
+                  {t('transactionSettings')}
+                </Text>
+                <TransactionSettings
+                  rawSlippage={userSlippageTolerance}
+                  setRawSlippage={setUserslippageTolerance}
+                  deadline={ttl}
+                  setDeadline={setTtl}
+                />
+                <Text fontWeight={600} fontSize={14}>
+                  {t('interfaceSettings')}
+                </Text>
+                <RowBetween>
+                  <RowFixed>
+                    <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                      {t('toggleExpertMode')}
+                    </TYPE.black>
+                    <QuestionHelper text={t('expertModeQuestionHelper')} />
+                  </RowFixed>
+                  <Toggle
+                    id="toggle-expert-mode-button"
+                    isActive={expertMode}
+                    toggle={
+                      expertMode
+                        ? () => {
+                            toggleExpertMode()
+                            setShowConfirmation(false)
+                          }
+                        : () => {
+                            toggle()
+                            setShowConfirmation(true)
+                          }
+                    }
+                  />
+                </RowBetween>
+              </>
+            ) : null}
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>

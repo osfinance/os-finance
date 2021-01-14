@@ -153,5 +153,22 @@
   "transactionSubmitted": "交易已提交",
   "close": "关闭",
   "tokenInsufficientLiquidity": "流动性不足",
-  "exceedBorrowBalance": "超过借贷余额"
+  "exceedBorrowBalance": "超过借贷余额",
+  "transactionSettings": "交易设置",
+  "toggleExpertMode": "切换专业模式",
+  "expertModeQuestionHelper": "通过确认对话框允许使用高滑点交易，使用风险自负",
+  "slippageTolerance": "滑点容差",
+  "slippageQuestionHelper": "如果价格的不利变化超过此百分比，您的交易将被取消",
+  "transactionDeadline": "限定期限",
+  "minutes": "分钟",
+  "deadlineQuestionHelper": "如果您的交易待处理的时间超过此时间，则该交易将被取消",
+  "validSlippagePercentage": "请输入有效的滑点率",
+  "transactionMayFail": "您的交易可能失败",
+  "transactionMayFrontrun": "您的交易可能会优先交易",
+  "areYouSure": "确定?",
+  "turnOnExpertModeQuestionHelper": "专业模式会关闭确认交易提示，并允许使用导致低利率和资金损失的高滑点交易",
+  "expertModeUsageNotice": "请确保在自己清楚每个步骤的情况下使用此模式",
+  "confirm": "确认",
+  "confirmExpertMode": "请输入 \"确认\" 来开启专业模式。",
+  "turnOnExpertMode": "开启专业模式"
 }
