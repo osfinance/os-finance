@@ -284,6 +284,11 @@ export const StyledMenuButton = styled.button`
   }
 `
 
+const EmojiIcon = styled.div`
+  font-size: 26px;
+  text-decoration: none;
+`
+
 const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.RINKEBY]: 'Rinkeby',
   [ChainId.ROPSTEN]: 'Ropsten',
@@ -310,9 +315,26 @@ export default function Header() {
     <HeaderFrame>
       <HeaderRow>
         <Title href=".">
-          <UniIcon>
-            <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
-          </UniIcon>
+          {PageFields.HOME === page && (
+            <UniIcon>
+              <EmojiIcon role="img">{'😋'}</EmojiIcon>
+            </UniIcon>
+          )}
+          {PageFields.UNISWAP === page && (
+            <UniIcon>
+              <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+            </UniIcon>
+          )}
+          {PageFields.COMPOUND === page && (
+            <UniIcon>
+              <img width={'28px'} src={CompoundIcon} alt="logo" />
+            </UniIcon>
+          )}
+          {PageFields.SUSHISWAP === page && (
+            <UniIcon>
+              <EmojiIcon>{'🍣'}</EmojiIcon>
+            </UniIcon>
+          )}
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/home'}>
