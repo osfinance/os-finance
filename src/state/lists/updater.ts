@@ -12,7 +12,7 @@ import { acceptListUpdate } from './actions'
 import { useActiveListUrls } from './hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 
-export default function Updater({ pathName }: { pathName: PathNameType }): null {
+export default function Updater(): null {
   const { library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   const isWindowVisible = useIsWindowVisible()
@@ -27,12 +27,14 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
   const fetchList = useFetchListCallback()
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
-    Object.keys(lists[pathName]).forEach(url =>
+    Object.keys(lists).forEach(url =>
       fetchList(url).catch(error => console.debug('interval list fetching error', error))
     )
-  }, [fetchList, isWindowVisible, lists, pathName])
+  }, [fetchList, isWindowVisible, lists])
+
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
+
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
     Object.keys(lists).forEach(listUrl => {
@@ -41,11 +43,12 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
         fetchList(listUrl).catch(error => console.debug('list added fetching error', error))
       }
     })
-  }, [dispatch, fetchList, library, lists, pathName])
+  }, [dispatch, fetchList, library, lists])
+
   // automatically update lists if versions are minor/patch
   useEffect(() => {
-    Object.keys(lists[pathName]).forEach(listUrl => {
-      const list = lists[pathName][listUrl]
+    Object.keys(lists).forEach(listUrl => {
+      const list = lists[listUrl]
       if (list.current && list.pendingUpdate) {
         const bump = getVersionUpgrade(list.current.version, list.pendingUpdate.version)
         switch (bump) {
@@ -63,6 +66,7 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
               )
             }
             break
+
           case VersionUpgrade.MAJOR:
             // accept update if list is active or list in background
             if (activeListUrls?.includes(listUrl) || UNSUPPORTED_LIST_URLS.includes(listUrl)) {
