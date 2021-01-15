@@ -48,7 +48,7 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import { useRouteMatch } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()

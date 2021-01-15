@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
