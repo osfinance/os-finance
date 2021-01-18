@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
-import { NavLink, Link as HistoryLink, useLocation } from 'react-router-dom'
+import { NavLink, Link as HistoryLink } from 'react-router-dom'
 
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
@@ -11,6 +11,7 @@ import Settings from '../Settings/FlashLoanSettings'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { resetMintState } from 'state/mint/actions'
+import { usePathName } from 'state/lists/hooks'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -71,7 +72,7 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
 }
 
 export function FindPoolTabs() {
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
   return (
     <Tabs>
       <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
@@ -88,6 +89,7 @@ export function FindPoolTabs() {
 export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating: boolean }) {
   // reset states on back
   const dispatch = useDispatch<AppDispatch>()
+  const pathName = usePathName()
 
   return (
     <Tabs>
