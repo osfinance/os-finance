@@ -14,6 +14,7 @@ import {
   WETH
 } from '@uniswap/sdk'
 import { useMemo } from 'react'
+import { usePathName } from 'state/lists/hooks'
 import { useActiveWeb3React } from '../hooks'
 import { useAllTokens } from '../hooks/Tokens'
 import { useV1FactoryContract } from '../hooks/useContract'
@@ -51,7 +52,8 @@ function useMockV1Pair(inputCurrency?: Currency): MockV1Pair | undefined {
 
 // returns all v1 exchange addresses in the user's token list
 export function useAllTokenV1Exchanges(): { [exchangeAddress: string]: Token } {
-  const allTokens = useAllTokens()
+  const pathName = usePathName()
+  const allTokens = useAllTokens(pathName)
   const factory = useV1FactoryContract()
   const args = useMemo(() => Object.keys(allTokens).map(tokenAddress => [tokenAddress]), [allTokens])
 

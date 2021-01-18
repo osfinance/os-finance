@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux'
 import { AppState } from '../index'
 import sortByListPriority from 'utils/listSort'
 import UNSUPPORTED_TOKEN_LIST from '../../constants/tokenLists/uniswap-v2-unsupported.tokenlist.json'
+import { PathNameType } from './actions'
+import { useLocation } from 'react-router-dom'
 
 type TagDetails = Tags[keyof Tags]
 export interface TagInfo extends TagDetails {
@@ -79,7 +81,9 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   return map
 }
 
-export function useAllLists(): {
+export function useAllLists(
+  pathName: string
+): {
   readonly [url: string]: {
     readonly current: TokenList | null
     readonly pendingUpdate: TokenList | null
@@ -87,7 +91,8 @@ export function useAllLists(): {
     readonly error: string | null
   }
 } {
-  return useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
+  const lists = useSelector<AppState, AppState['lists']['byOsUrl']>(state => state.lists.byOsUrl)
+  return lists[pathName]
 }
 
 function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddressMap {
@@ -101,8 +106,8 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
 }
 
 // merge tokens contained within lists from urls
-function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMap {
-  const lists = useAllLists()
+function useCombinedTokenMapFromUrls(urls: string[] | undefined, pathName: PathNameType): TokenAddressMap {
+  const lists = useAllLists(pathName)
 
   return useMemo(() => {
     if (!urls) return EMPTY_LIST
@@ -111,7 +116,7 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
       urls
         .slice()
         // sort by priority so top priority goes last
-        .sort(sortByListPriority)
+        .sort(sortByListPriority(pathName))
         .reduce((allTokens, currentUrl) => {
           const current = lists[currentUrl]?.current
           if (!current) return allTokens
@@ -124,34 +129,37 @@ function useCombinedTokenMapFromUrls(urls: string[] | undefined): TokenAddressMa
           }
         }, EMPTY_LIST)
     )
-  }, [lists, urls])
+  }, [lists, pathName, urls])
 }
 
 // filter out unsupported lists
-export function useActiveListUrls(): string[] | undefined {
-  return useSelector<AppState, AppState['lists']['activeListUrls']>(state => state.lists.activeListUrls)?.filter(
-    url => !UNSUPPORTED_LIST_URLS.includes(url)
+export function useActiveListUrls(pathName: PathNameType): string[] | undefined {
+  const activeListUrls = useSelector<AppState, AppState['lists']['activeOsListUrls']>(
+    state => state.lists.activeOsListUrls
+  )
+  return activeListUrls?.[pathName]?.filter(url => !UNSUPPORTED_LIST_URLS[pathName].includes(url))
+}
+
+export function useInactiveListUrls(pathName: PathNameType): string[] {
+  const lists = useAllLists(pathName)
+  const allActiveListUrls = useActiveListUrls(pathName)
+  return Object.keys(lists).filter(
+    url => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS[pathName].includes(url)
   )
 }
 
-export function useInactiveListUrls(): string[] {
-  const lists = useAllLists()
-  const allActiveListUrls = useActiveListUrls()
-  return Object.keys(lists).filter(url => !allActiveListUrls?.includes(url) && !UNSUPPORTED_LIST_URLS.includes(url))
-}
-
 // get all the tokens from active lists, combine with local default tokens
-export function useCombinedActiveList(): TokenAddressMap {
-  const activeListUrls = useActiveListUrls()
-  const activeTokens = useCombinedTokenMapFromUrls(activeListUrls)
+export function useCombinedActiveList(pathName: PathNameType): TokenAddressMap {
+  const activeListUrls = useActiveListUrls(pathName)
+  const activeTokens = useCombinedTokenMapFromUrls(activeListUrls, pathName)
   const defaultTokenMap = listToTokenMap(DEFAULT_TOKEN_LIST)
   return combineMaps(activeTokens, defaultTokenMap)
 }
 
 // all tokens from inactive lists
-export function useCombinedInactiveList(): TokenAddressMap {
-  const allInactiveListUrls: string[] = useInactiveListUrls()
-  return useCombinedTokenMapFromUrls(allInactiveListUrls)
+export function useCombinedInactiveList(pathName: PathNameType): TokenAddressMap {
+  const allInactiveListUrls: string[] = useInactiveListUrls(pathName)
+  return useCombinedTokenMapFromUrls(allInactiveListUrls, pathName)
 }
 
 // used to hide warnings on import for default tokens
@@ -160,18 +168,25 @@ export function useDefaultTokenList(): TokenAddressMap {
 }
 
 // list of tokens not supported on interface, used to show warnings and prevent swaps and adds
-export function useUnsupportedTokenList(): TokenAddressMap {
+export function useUnsupportedTokenList(pathName: PathNameType): TokenAddressMap {
   // get hard coded unsupported tokens
   const localUnsupportedListMap = listToTokenMap(UNSUPPORTED_TOKEN_LIST)
 
   // get any loaded unsupported tokens
-  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS)
+  const loadedUnsupportedListMap = useCombinedTokenMapFromUrls(UNSUPPORTED_LIST_URLS[pathName], pathName)
 
   // format into one token address map
   return combineMaps(localUnsupportedListMap, loadedUnsupportedListMap)
 }
 
-export function useIsListActive(url: string): boolean {
-  const activeListUrls = useActiveListUrls()
+export function useIsListActive(url: string, pathName: PathNameType): boolean {
+  const activeListUrls = useActiveListUrls(pathName)
   return Boolean(activeListUrls?.includes(url))
+}
+
+export function usePathName() {
+  const location = useLocation()
+  const router = location.pathname.split('/')[1]
+  const pathName = router === 'uniswap' || router === 'sushiswap' ? router : 'uniswap'
+  return pathName
 }

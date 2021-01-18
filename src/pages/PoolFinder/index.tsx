@@ -1,7 +1,6 @@
 import { Currency, ETHER, JSBI, TokenAmount } from '@uniswap/sdk'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Plus } from 'react-feather'
-import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ButtonDropdownLight } from '../../components/Button'
 import { LightCard } from '../../components/Card'
@@ -21,6 +20,7 @@ import AppBody from '../AppBody'
 import { Dots } from '../Pool/styleds'
 import { BlueCard } from '../../components/Card'
 import { TYPE } from '../../theme'
+import { usePathName } from 'state/lists/hooks'
 
 enum Fields {
   TOKEN0 = 0,
@@ -36,7 +36,7 @@ export default function PoolFinder() {
   const [currency0, setCurrency0] = useState<Currency | null>(ETHER)
   const [currency1, setCurrency1] = useState<Currency | null>(null)
 
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
 
   const [pairState, pair] = usePair(currency0 ?? undefined, currency1 ?? undefined, pathName)
   const addPair = usePairAdder()

@@ -40,6 +40,7 @@ import { currencyId } from '../../utils/currencyId'
 import { PoolPriceBar } from './PoolPriceBar'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import { usePathName } from 'state/lists/hooks'
 
 export default function AddLiquidity({
   match: {
@@ -276,7 +277,7 @@ export default function AddLiquidity({
     currencies[Field.CURRENCY_A]?.symbol
   } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
 
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
 
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {

@@ -1,4 +1,4 @@
-import { TokenAddressMap, useDefaultTokenList, useUnsupportedTokenList } from './../state/lists/hooks'
+import { TokenAddressMap, useDefaultTokenList, usePathName, useUnsupportedTokenList } from './../state/lists/hooks'
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, ETHER, Token, currencyEquals } from '@uniswap/sdk'
 import { useMemo } from 'react'
@@ -12,6 +12,7 @@ import { useActiveWeb3React } from './index'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
 import { filterTokens } from '../components/SearchModal/filtering'
 import { arrayify } from 'ethers/lib/utils'
+import { PathNameType } from 'state/lists/actions'
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -52,18 +53,18 @@ export function useDefaultTokens(): { [address: string]: Token } {
   return useTokensFromMap(defaultList, false)
 }
 
-export function useAllTokens(): { [address: string]: Token } {
-  const allTokens = useCombinedActiveList()
+export function useAllTokens(pathName: PathNameType): { [address: string]: Token } {
+  const allTokens = useCombinedActiveList(pathName)
   return useTokensFromMap(allTokens, true)
 }
 
-export function useAllInactiveTokens(): { [address: string]: Token } {
+export function useAllInactiveTokens(pathName: PathNameType): { [address: string]: Token } {
   // get inactive tokens
-  const inactiveTokensMap = useCombinedInactiveList()
+  const inactiveTokensMap = useCombinedInactiveList(pathName)
   const inactiveTokens = useTokensFromMap(inactiveTokensMap, false)
 
   // filter out any token that are on active list
-  const activeTokensAddresses = Object.keys(useAllTokens())
+  const activeTokensAddresses = Object.keys(useAllTokens(pathName))
   const filteredInactive = activeTokensAddresses
     ? Object.keys(inactiveTokens).reduce<{ [address: string]: Token }>((newMap, address) => {
         if (!activeTokensAddresses.includes(address)) {
@@ -77,12 +78,14 @@ export function useAllInactiveTokens(): { [address: string]: Token } {
 }
 
 export function useUnsupportedTokens(): { [address: string]: Token } {
-  const unsupportedTokensMap = useUnsupportedTokenList()
+  const pathName = usePathName()
+  const unsupportedTokensMap = useUnsupportedTokenList(pathName)
   return useTokensFromMap(unsupportedTokensMap, false)
 }
 
 export function useIsTokenActive(token: Token | undefined | null): boolean {
-  const activeTokens = useAllTokens()
+  const pathName = usePathName()
+  const activeTokens = useAllTokens(pathName)
 
   if (!activeTokens || !token) {
     return false
@@ -94,7 +97,8 @@ export function useIsTokenActive(token: Token | undefined | null): boolean {
 // used to detect extra search results
 export function useFoundOnInactiveList(searchQuery: string): Token[] | undefined {
   const { chainId } = useActiveWeb3React()
-  const inactiveTokens = useAllInactiveTokens()
+  const pathName = usePathName()
+  const inactiveTokens = useAllInactiveTokens(pathName)
 
   return useMemo(() => {
     if (!chainId || searchQuery === '') {
@@ -153,7 +157,8 @@ function parseStringOrBytes32(str: string | undefined, bytes32: string | undefin
 // otherwise returns the token
 export function useToken(tokenAddress?: string): Token | undefined | null {
   const { chainId } = useActiveWeb3React()
-  const tokens = useAllTokens()
+  const pathName = usePathName()
+  const tokens = useAllTokens(pathName)
 
   const address = isAddress(tokenAddress)
 

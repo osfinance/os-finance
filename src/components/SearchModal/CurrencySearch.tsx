@@ -23,6 +23,7 @@ import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
 import { Edit } from 'react-feather'
 import { ButtonLight } from 'components/Button'
+import { usePathName } from 'state/lists/hooks'
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -73,7 +74,8 @@ export function CurrencySearch({
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [invertSearchOrder] = useState<boolean>(false)
 
-  const allTokens = useAllTokens()
+  const pathName = usePathName()
+  const allTokens = useAllTokens(pathName)
   // const inactiveTokens: Token[] | undefined = useFoundOnInactiveList(searchQuery)
 
   // if they input an address, use it

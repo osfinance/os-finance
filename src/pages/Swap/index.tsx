@@ -48,14 +48,13 @@ import Loader from '../../components/Loader'
 import { useIsTransactionUnsupported } from 'hooks/Trades'
 import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
 import { isTradeBetter } from 'utils/trades'
-import { useLocation } from 'react-router-dom'
+import { usePathName } from 'state/lists/hooks'
 
 export default function Swap() {
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff
-  const location = useLocation()
-  const router = location.pathname.split('/')[1]
+  const router = usePathName()
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId)
