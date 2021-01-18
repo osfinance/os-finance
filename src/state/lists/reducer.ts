@@ -60,7 +60,7 @@ export default createReducer(initialState, builder =>
       state.byOsUrl[pathName][url] = {
         current: null,
         pendingUpdate: null,
-        ...state.byOsUrl[url],
+        ...state.byOsUrl[pathName][url],
         loadingRequestId: requestId,
         error: null
       }
