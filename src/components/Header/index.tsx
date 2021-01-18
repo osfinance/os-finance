@@ -298,7 +298,6 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
 
   const location = useLocation()
   const page = location.pathname.split('/')[1]
@@ -314,7 +313,7 @@ export default function Header() {
   return (
     <HeaderFrame>
       <HeaderRow>
-        <Title href=".">
+        <Title href={`/#/${page}/`}>
           {PageFields.HOME === page && (
             <UniIcon>
               <EmojiIcon role="img">{'😋'}</EmojiIcon>
@@ -338,7 +337,7 @@ export default function Header() {
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/home'}>
-            {t('home')}
+            OS Finance
           </StyledNavLink>
           {PageFields.UNISWAP === page && <UniswapHeaderLinks />}
           {PageFields.SUSHISWAP === page && <SushiswapHeaderLinks />}
