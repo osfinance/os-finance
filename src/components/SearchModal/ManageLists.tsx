@@ -11,7 +11,7 @@ import { TokenList } from '@uniswap/token-lists'
 import useToggle from '../../hooks/useToggle'
 import { AppDispatch, AppState } from '../../state'
 import { acceptListUpdate, removeList, disableList, enableList } from '../../state/lists/actions'
-import { useIsListActive, useAllLists, useActiveListUrls } from '../../state/lists/hooks'
+import { useIsListActive, useAllLists, useActiveListUrls, usePathName } from '../../state/lists/hooks'
 import { ExternalLink, LinkStyledButton, TYPE, IconWrapper } from '../../theme'
 import listVersionLabel from '../../utils/listVersionLabel'
 import { parseENSAddress } from '../../utils/parseENSAddress'
@@ -93,13 +93,14 @@ function listUrlRowHTMLId(listUrl: string) {
 }
 
 const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
-  const listsByUrl = useSelector<AppState, AppState['lists']['byUrl']>(state => state.lists.byUrl)
+  const listsByUrl = useSelector<AppState, AppState['lists']['byOsUrl']>(state => state.lists.byOsUrl)
   const dispatch = useDispatch<AppDispatch>()
-  const { current: list, pendingUpdate: pending } = listsByUrl[listUrl]
+  const pathName = usePathName()
+  const { current: list, pendingUpdate: pending } = listsByUrl[pathName][listUrl]
 
   const theme = useTheme()
   const listColor = useListColor(list?.logoURI)
-  const isActive = useIsListActive(listUrl)
+  const isActive = useIsListActive(listUrl, pathName)
 
   const [open, toggle] = useToggle(false)
   const node = useRef<HTMLDivElement>()
@@ -121,8 +122,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       action: 'Update List from List Select',
       label: listUrl
     })
-    dispatch(acceptListUpdate(listUrl))
-  }, [dispatch, listUrl, pending])
+    dispatch(acceptListUpdate({ url: listUrl, pathName }))
+  }, [dispatch, listUrl, pathName, pending])
 
   const handleRemoveList = useCallback(() => {
     ReactGA.event({
@@ -136,9 +137,9 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
         action: 'Confirm Remove List',
         label: listUrl
       })
-      dispatch(removeList(listUrl))
+      dispatch(removeList({ url: listUrl, pathName }))
     }
-  }, [dispatch, listUrl])
+  }, [dispatch, listUrl, pathName])
 
   const handleEnableList = useCallback(() => {
     ReactGA.event({
@@ -146,8 +147,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       action: 'Enable List',
       label: listUrl
     })
-    dispatch(enableList(listUrl))
-  }, [dispatch, listUrl])
+    dispatch(enableList({ url: listUrl, pathName }))
+  }, [dispatch, listUrl, pathName])
 
   const handleDisableList = useCallback(() => {
     ReactGA.event({
@@ -155,8 +156,8 @@ const ListRow = memo(function ListRow({ listUrl }: { listUrl: string }) {
       action: 'Disable List',
       label: listUrl
     })
-    dispatch(disableList(listUrl))
-  }, [dispatch, listUrl])
+    dispatch(disableList({ url: listUrl, pathName }))
+  }, [dispatch, listUrl, pathName])
 
   if (!list) return null
 
@@ -225,11 +226,12 @@ export function ManageLists({
   const theme = useTheme()
 
   const [listUrlInput, setListUrlInput] = useState<string>('')
+  const pathName = usePathName()
 
-  const lists = useAllLists()
+  const lists = useAllLists(pathName)
 
   // sort by active but only if not visible
-  const activeListUrls = useActiveListUrls()
+  const activeListUrls = useActiveListUrls(pathName)
   const [activeCopy, setActiveCopy] = useState<string[] | undefined>()
   useEffect(() => {
     if (!activeCopy && activeListUrls) {
@@ -241,7 +243,7 @@ export function ManageLists({
     setListUrlInput(e.target.value)
   }, [])
 
-  const fetchList = useFetchListCallback()
+  const fetchList = useFetchListCallback(pathName)
 
   const validUrl: boolean = useMemo(() => {
     return uriToHttp(listUrlInput).length > 0 || Boolean(parseENSAddress(listUrlInput))
@@ -252,7 +254,7 @@ export function ManageLists({
     return listUrls
       .filter(listUrl => {
         // only show loaded lists, hide unsupported lists
-        return Boolean(lists[listUrl].current) && !Boolean(UNSUPPORTED_LIST_URLS.includes(listUrl))
+        return Boolean(lists[listUrl].current) && !Boolean(UNSUPPORTED_LIST_URLS[pathName].includes(listUrl))
       })
       .sort((u1, u2) => {
         const { current: l1 } = lists[u1]
@@ -277,7 +279,7 @@ export function ManageLists({
         if (l2) return 1
         return 0
       })
-  }, [lists, activeCopy])
+  }, [lists, pathName, activeCopy])
 
   // temporary fetched list for import flow
   const [tempList, setTempList] = useState<TokenList>()

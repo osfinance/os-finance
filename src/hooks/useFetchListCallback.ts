@@ -5,12 +5,14 @@ import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { getNetworkLibrary, NETWORK_CHAIN_ID } from '../connectors'
 import { AppDispatch } from '../state'
-import { fetchTokenList } from '../state/lists/actions'
+import { fetchTokenList, PathNameType } from '../state/lists/actions'
 import getTokenList from '../utils/getTokenList'
 import resolveENSContentHash from '../utils/resolveENSContentHash'
 import { useActiveWeb3React } from './index'
 
-export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
+export function useFetchListCallback(
+  pathName: PathNameType
+): (listUrl: string, sendDispatch?: boolean) => Promise<TokenList> {
   const { chainId, library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -34,18 +36,19 @@ export function useFetchListCallback(): (listUrl: string, sendDispatch?: boolean
   return useCallback(
     async (listUrl: string, sendDispatch = true) => {
       const requestId = nanoid()
-      sendDispatch && dispatch(fetchTokenList.pending({ requestId, url: listUrl }))
+      sendDispatch && dispatch(fetchTokenList.pending({ requestId, url: listUrl, pathName }))
       return getTokenList(listUrl, ensResolver)
         .then(tokenList => {
-          sendDispatch && dispatch(fetchTokenList.fulfilled({ url: listUrl, tokenList, requestId }))
+          sendDispatch && dispatch(fetchTokenList.fulfilled({ url: listUrl, tokenList, requestId, pathName }))
           return tokenList
         })
         .catch(error => {
           console.debug(`Failed to get list at url ${listUrl}`, error)
-          sendDispatch && dispatch(fetchTokenList.rejected({ url: listUrl, requestId, errorMessage: error.message }))
+          sendDispatch &&
+            dispatch(fetchTokenList.rejected({ url: listUrl, requestId, errorMessage: error.message, pathName }))
           throw error
         })
     },
-    [dispatch, ensResolver]
+    [dispatch, ensResolver, pathName]
   )
 }

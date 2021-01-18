@@ -10,6 +10,7 @@ import { useSingleContractMultipleData, useMultipleContractSingleData } from '..
 import { useUserUnclaimedAmount } from '../claim/hooks'
 import { useTotalUniEarned } from '../stake/hooks'
 import { CToken } from '../../data/CToken'
+import { usePathName } from 'state/lists/hooks'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -194,7 +195,8 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 // mimics useAllBalances
 export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | undefined } {
   const { account } = useActiveWeb3React()
-  const allTokens = useAllTokens()
+  const pathName = usePathName()
+  const allTokens = useAllTokens(pathName)
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
   const balances = useTokenBalances(account ?? undefined, allTokensArray)
   return balances ?? {}

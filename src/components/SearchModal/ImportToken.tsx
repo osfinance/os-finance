@@ -15,7 +15,7 @@ import { useAddUserToken } from 'state/user/hooks'
 import { getEtherscanLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import { ExternalLink } from '../../theme/components'
-import { useCombinedInactiveList } from 'state/lists/hooks'
+import { useCombinedInactiveList, usePathName } from 'state/lists/hooks'
 import ListLogo from 'components/ListLogo'
 import { PaddedColumn, Checkbox } from './styleds'
 
@@ -49,13 +49,14 @@ export function ImportToken({ token, onBack, onDismiss, handleCurrencySelect }: 
   const theme = useTheme()
 
   const { chainId } = useActiveWeb3React()
+  const pathName = usePathName()
 
   const [confirmed, setConfirmed] = useState(false)
 
   const addToken = useAddUserToken()
 
   // use for showing import source on inactive tokens
-  const inactiveTokenList = useCombinedInactiveList()
+  const inactiveTokenList = useCombinedInactiveList(pathName)
 
   const list = chainId && inactiveTokenList?.[chainId]?.[token.address]?.list
 
