@@ -1,18 +1,21 @@
 import { ChainId, Pair, Token } from '@uniswap/sdk'
+import { Pool } from 'data/Pool'
 import flatMap from 'lodash.flatmap'
 import ReactGA from 'react-ga'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '../../constants'
+import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS, PINNED_POOLS } from '../../constants'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens } from '../../hooks/Tokens'
 import { AppDispatch, AppState } from '../index'
 import {
   addSerializedPair,
+  addSerializedPool,
   addSerializedToken,
   removeSerializedToken,
   SerializedPair,
+  SerializedPool,
   SerializedToken,
   updateUserDarkMode,
   updateUserDeadline,
@@ -184,6 +187,23 @@ export function usePairAdder(): (pair: Pair) => void {
   )
 }
 
+function serializePool(pool: Pool): SerializedPool {
+  return {
+    token: serializeToken(pool.token)
+  }
+}
+
+export function usePoolAdder(): (pool: Pool) => void {
+  const dispatch = useDispatch<AppDispatch>()
+
+  return useCallback(
+    (pool: Pool) => {
+      dispatch(addSerializedPool({ serializedPool: serializePool(pool) }))
+    },
+    [dispatch]
+  )
+}
+
 export function useURLWarningVisible(): boolean {
   return useSelector((state: AppState) => state.user.URLWarningVisible)
 }
@@ -263,6 +283,71 @@ export function useTrackedTokenPairs(): [Token, Token][] {
       const key = sorted ? `${tokenA.address}:${tokenB.address}` : `${tokenB.address}:${tokenA.address}`
       if (memo[key]) return memo
       memo[key] = sorted ? [tokenA, tokenB] : [tokenB, tokenA]
+      return memo
+    }, {})
+
+    return Object.keys(keyed).map(key => keyed[key])
+  }, [combinedList])
+}
+
+/**
+ * Given the tokensreturn the liquidity token that represents its liquidity shares
+ * @param token
+ */
+export function toFlashLoanV1LiquidityToken(token: Token): Token {
+  return new Token(token.chainId, Pool.getAddress(token), 18, 'FL-V1', 'FlashLoan V1')
+}
+
+/**
+ * Returns all the pools of tokens that are tracked by the user for the current chain ID.
+ */
+export function useTrackedTokenPools(): Token[] {
+  const { chainId } = useActiveWeb3React()
+  const tokens = useAllTokens()
+
+  // pinned pools
+  const pinnedPools = useMemo(() => (chainId ? PINNED_POOLS[chainId] ?? [] : []), [chainId])
+
+  // pools for every token against every base
+  const generatedPools: Token[] = useMemo(
+    () =>
+      chainId
+        ? flatMap(Object.keys(tokens), tokenAddress => {
+            const token = tokens[tokenAddress]
+            // for each token on the current chain,
+            return (
+              [token]
+            )
+          })
+        : [],
+    [tokens, chainId]
+  )
+
+  // pairs saved by users
+  const savedSerializedPools = useSelector<AppState, AppState['user']['pools']>(({ user: { pools } }) => pools)
+
+  const userPools: Token[] = useMemo(() => {
+    if (!chainId || !savedSerializedPools) return []
+    const forChain = savedSerializedPools[chainId]
+    if (!forChain) return []
+
+    return Object.keys(forChain).map(poolId => {
+      return deserializeToken(forChain[poolId].token)
+    })
+  }, [savedSerializedPools, chainId])
+
+  const combinedList = useMemo(() => userPools.concat(generatedPools).concat(pinnedPools), [
+    generatedPools,
+    pinnedPools,
+    userPools
+  ])
+
+  return useMemo(() => {
+    // dedupes pairs of tokens in the combined list
+    const keyed = combinedList.reduce<{ [key: string]: Token }>((memo, token) => {
+      const key = `${token.address}`
+      if (memo[key]) return memo
+      memo[key] = token
       return memo
     }, {})
 

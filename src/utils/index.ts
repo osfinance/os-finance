@@ -4,10 +4,12 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
+import { abi as IFlashLoanV1Router01ABI } from '../constants/flashLoan/IFlashLoanV1Router01.json'
 import { abi as ICERC20ABI } from '../constants/lend/c_erc20_interface.json'
 import { abi as ICEtherABI } from '../constants/lend/c_ether.json'
 import { abi as IMaximillionABI } from '../constants/lend/maximillion.json'
 import { ROUTER_ADDRESS } from '../constants'
+import { ROUTER_ADDRESS as FLASH_LOAN_ROUTER_ADDRESS } from '../constants/flashLoan'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, Fraction } from '@uniswap/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 import { COMPTROLLER_ABI, COMPTROLLER_ADDRESSES, MAXIMILLION_ADDRESSES } from '../constants/lend'
@@ -105,6 +107,11 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 // account is optional
 export function getRouterContract(_: number, library: Web3Provider, account?: string): Contract {
   return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
+}
+
+// account is optional
+export function getFlashLoanRouterContract(_: number, library: Web3Provider, account?: string): Contract {
+  return getContract(FLASH_LOAN_ROUTER_ADDRESS, IFlashLoanV1Router01ABI, library, account)
 }
 
 export function getCERC20Contract(_: number, cTokenAddress: string, library: Web3Provider, account?: string): Contract {

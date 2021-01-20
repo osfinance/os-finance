@@ -323,10 +323,6 @@ export default function Header() {
           </UniIcon>
         </Title>
         <HeaderLinks>
-          {/* 
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
-          </StyledNavLink>
           <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
@@ -340,30 +336,24 @@ export default function Header() {
           >
             {t('pool')}
           </StyledNavLink>
-          */}
           <StyledNavLink id={`lending-nav-link`} to={'/lending'}>
             {t('lending')}
           </StyledNavLink>
+          <StyledNavLink id={`stake-nav-link`} to={'/deer'}>
+            DEER
+          </StyledNavLink>
+          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
+            Vote
+          </StyledNavLink>
+          <StyledExternalLink id={`stake-nav-link`} href={'https://info.deerfi.com'}>
+            Charts <span style={{ fontSize: '11px' }}>↗</span>
+          </StyledExternalLink>
           <StyledExternalLink id={`twitter-nav-link`} href={'https://twitter.com/deerfi_com'} smallHide={false}>
             Twitter <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
           <StyledExternalLink id={`discord-nav-link`} href={'https://discord.gg/SHdfFgX'} smallHide={false}>
             Discord <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
-          <StyledExternalLink id={`discord-nav-link`} href={'https://defipulse.com/defi-list'} smallHide={true}>
-            DeFi Pulse <span style={{ fontSize: '11px' }}>↗</span>
-          </StyledExternalLink>
-          {/* 
-          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
-            UNI
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
-            Charts <span style={{ fontSize: '11px' }}>↗</span>
-          </StyledExternalLink>
-          */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>

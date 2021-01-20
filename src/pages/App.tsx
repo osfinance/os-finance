@@ -10,7 +10,19 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import { RedirectPathToLendingOnly } from './Swap/redirects'
+import AddFlashLoanLiquidity from './AddFlashLoanLiquidity'
+import {
+  RedirectOldAddLiquidityPathStructure,
+  RedirectToAddLiquidity
+} from './AddFlashLoanLiquidity/redirects'
+import DeerEarn from './DeerEarn'
+import Manage from './DeerEarn/Manage'
+import FlashLoanPool from './FlashLoanPool'
+import FlashLoanPoolFinder from './FlashLoanPoolFinder'
+import RemoveFlashLoanLiquidity from './RemoveFlashLoanLiquidity'
+import DeerVote from './DeerVote'
+import VotePage from './Vote/VotePage'
+import { RedirectPathToPoolOnly } from './FlashLoanPool/redirects'
 
 import Lend from './Lend'
 
@@ -72,7 +84,19 @@ export default function App() {
           <Web3ReactManager>
             <Switch>
               <Route exact strict path="/lending" component={Lend} />
-              <Route component={RedirectPathToLendingOnly} />
+              <Route exact strict path="/find" component={FlashLoanPoolFinder} />
+              <Route exact strict path="/pool" component={FlashLoanPool} />
+              <Route exact strict path="/deer" component={DeerEarn} />
+              <Route exact strict path="/vote" component={DeerVote} />
+              <Route exact strict path="/create" component={RedirectToAddLiquidity} />
+              <Route exact path="/add" component={AddFlashLoanLiquidity} />
+              <Route exact path="/add/:currencyId" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact path="/create" component={AddFlashLoanLiquidity} />
+              <Route exact path="/create/:currencyId" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact strict path="/remove/:currencyId" component={RemoveFlashLoanLiquidity} />
+              <Route exact strict path="/deer/:currencyId" component={Manage} />
+              <Route exact strict path="/vote/:id" component={VotePage} />
+              <Route component={RedirectPathToPoolOnly} />
             </Switch>
           </Web3ReactManager>
           <Marginer />

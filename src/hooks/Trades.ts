@@ -168,3 +168,19 @@ export function useIsTransactionUnsupported(currencyIn?: Currency, currencyOut?:
 
   return false
 }
+
+export function useIsFlashLoanTransactionUnsupported(currencyIn?: Currency): boolean {
+  const unsupportedToken: { [address: string]: Token } = useUnsupportedTokens()
+  const { chainId } = useActiveWeb3React()
+
+  const tokenIn = wrappedCurrency(currencyIn, chainId)
+
+  // if unsupported list loaded & either token on list, mark as unsupported
+  if (unsupportedToken) {
+    if (tokenIn && Object.keys(unsupportedToken).includes(tokenIn.address)) {
+      return true
+    }
+  }
+
+  return false
+}

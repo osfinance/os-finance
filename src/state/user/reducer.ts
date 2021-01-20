@@ -7,6 +7,7 @@ import {
   removeSerializedPair,
   removeSerializedToken,
   SerializedPair,
+  SerializedPool,
   SerializedToken,
   updateMatchesDarkMode,
   updateUserDarkMode,
@@ -49,6 +50,13 @@ export interface UserState {
     }
   }
 
+  pools: {
+    [chainId: number]: {
+      // keyed by token0Address:token1Address
+      [key: string]: SerializedPool
+    }
+  }
+
   timestamp: number
   URLWarningVisible: boolean
 }
@@ -66,6 +74,7 @@ export const initialState: UserState = {
   userDeadline: DEFAULT_DEADLINE_FROM_NOW,
   tokens: {},
   pairs: {},
+  pools: {},
   timestamp: currentTimestamp(),
   URLWarningVisible: true
 }
