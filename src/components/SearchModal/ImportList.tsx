@@ -19,7 +19,7 @@ import { AppDispatch } from 'state'
 import { useFetchListCallback } from 'hooks/useFetchListCallback'
 import { removeList, enableList } from 'state/lists/actions'
 import { CurrencyModalView } from './CurrencySearchModal'
-import { useAllLists } from 'state/lists/hooks'
+import { useAllLists, usePathName } from 'state/lists/hooks'
 
 const Wrapper = styled.div`
   position: relative;
@@ -36,12 +36,13 @@ interface ImportProps {
 export function ImportList({ listURL, list, setModalView, onDismiss }: ImportProps) {
   const theme = useTheme()
   const dispatch = useDispatch<AppDispatch>()
+  const pathName = usePathName()
 
   // user must accept
   const [confirmed, setConfirmed] = useState(false)
 
-  const lists = useAllLists()
-  const fetchList = useFetchListCallback()
+  const lists = useAllLists(pathName)
+  const fetchList = useFetchListCallback(pathName)
 
   // monitor is list is loading
   const adding = Boolean(lists[listURL]?.loadingRequestId)
@@ -59,7 +60,7 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
         })
 
         // turn list on
-        dispatch(enableList(listURL))
+        dispatch(enableList({ url: listURL, pathName }))
         // go back to lists
         setModalView(CurrencyModalView.manage)
       })
@@ -70,9 +71,9 @@ export function ImportList({ listURL, list, setModalView, onDismiss }: ImportPro
           label: listURL
         })
         setAddError(error.message)
-        dispatch(removeList(listURL))
+        dispatch(removeList({ url: listURL, pathName }))
       })
-  }, [adding, dispatch, fetchList, listURL, setModalView])
+  }, [adding, dispatch, fetchList, listURL, pathName, setModalView])
 
   return (
     <Wrapper>

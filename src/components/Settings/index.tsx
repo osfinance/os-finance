@@ -1,16 +1,25 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import { Text } from 'rebass'
-import styled from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
-import { useExpertModeManager } from '../../state/user/hooks'
+import {
+  useExpertModeManager,
+  useUserTransactionTTL,
+  useUserSlippageTolerance,
+  useUserSingleHopOnly
+} from '../../state/user/hooks'
+import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'
-import { RowBetween } from '../Row'
+import QuestionHelper from '../QuestionHelper'
+import { RowBetween, RowFixed } from '../Row'
+import Toggle from '../Toggle'
+import TransactionSettings from '../TransactionSettings'
 
 const StyledMenuIcon = styled(Settings)`
   height: 20px;
@@ -115,7 +124,14 @@ export default function SettingsTab() {
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
 
+  const theme = useContext(ThemeContext)
+  const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
+
+  const [ttl, setTtl] = useUserTransactionTTL()
+
   const [expertMode, toggleExpertMode] = useExpertModeManager()
+
+  const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
 
   // show confirmation view before turning on
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -147,7 +163,7 @@ export default function SettingsTab() {
                 error={true}
                 padding={'12px'}
                 onClick={() => {
-                  if (window.prompt(t('confirmExpertMode')) === t('confirm')) {
+                  if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
                     toggleExpertMode()
                     setShowConfirmation(false)
                   }
@@ -175,8 +191,53 @@ export default function SettingsTab() {
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
             <Text fontWeight={600} fontSize={14}>
+              {t('transactionSettings')}
+            </Text>
+            <TransactionSettings
+              rawSlippage={userSlippageTolerance}
+              setRawSlippage={setUserslippageTolerance}
+              deadline={ttl}
+              setDeadline={setTtl}
+            />
+            <Text fontWeight={600} fontSize={14}>
               {t('interfaceSettings')}
             </Text>
+            <RowBetween>
+              <RowFixed>
+                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                  {t('toggleExpertMode')}
+                </TYPE.black>
+                <QuestionHelper text={t('expertModeQuestionHelper')} />
+              </RowFixed>
+              <Toggle
+                id="toggle-expert-mode-button"
+                isActive={expertMode}
+                toggle={
+                  expertMode
+                    ? () => {
+                        toggleExpertMode()
+                        setShowConfirmation(false)
+                      }
+                    : () => {
+                        toggle()
+                        setShowConfirmation(true)
+                      }
+                }
+              />
+            </RowBetween>
+            <RowBetween>
+              <RowFixed>
+                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                  {t('disableMultihops')}
+                </TYPE.black>
+                <QuestionHelper text={t('restrictSwapPairs')} />
+              </RowFixed>
+              <Toggle
+                id="toggle-disable-multihop-button"
+                isActive={singleHopOnly}
+                toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
+              />
+            </RowBetween>
           </AutoColumn>
         </MenuFlyout>
       )}

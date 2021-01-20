@@ -2,7 +2,7 @@ import { JSBI, Pair, Percent, TokenAmount } from '@uniswap/sdk'
 import { darken } from 'polished'
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -25,6 +25,7 @@ import DoubleCurrencyLogo from '../DoubleLogo'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
 import { Dots } from '../swap/styleds'
 import { BIG_INT_ZERO } from '../../constants'
+import { usePathName } from 'state/lists/hooks'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -162,7 +163,7 @@ export function MinimalPositionCard({ pair, showUnwrapped = false, border }: Pos
 export default function FullPositionCard({ pair, border, stakedBalance }: PositionCardProps) {
   const { account } = useActiveWeb3React()
 
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
 
   const currency0 = unwrappedToken(pair.token0)
   const currency1 = unwrappedToken(pair.token1)

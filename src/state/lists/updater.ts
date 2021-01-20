@@ -8,23 +8,23 @@ import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import useInterval from '../../hooks/useInterval'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { AppDispatch } from '../index'
-import { acceptListUpdate } from './actions'
+import { acceptListUpdate, PathNameType } from './actions'
 import { useActiveListUrls } from './hooks'
 import { useAllInactiveTokens } from 'hooks/Tokens'
 
-export default function Updater(): null {
+export default function Updater({ pathName }: { pathName: PathNameType }): null {
   const { library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   const isWindowVisible = useIsWindowVisible()
 
   // get all loaded lists, and the active urls
-  const lists = useAllLists()
-  const activeListUrls = useActiveListUrls()
+  const lists = useAllLists(pathName)
+  const activeListUrls = useActiveListUrls(pathName)
 
   // initiate loading
-  useAllInactiveTokens()
+  useAllInactiveTokens(pathName)
 
-  const fetchList = useFetchListCallback()
+  const fetchList = useFetchListCallback(pathName)
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
     Object.keys(lists).forEach(url =>
@@ -59,7 +59,7 @@ export default function Updater(): null {
             const min = minVersionBump(list.current.tokens, list.pendingUpdate.tokens)
             // automatically update minor/patch as long as bump matches the min update
             if (bump >= min) {
-              dispatch(acceptListUpdate(listUrl))
+              dispatch(acceptListUpdate({ url: listUrl, pathName }))
             } else {
               console.error(
                 `List at url ${listUrl} could not automatically update because the version bump was only PATCH/MINOR while the update had breaking changes and should have been MAJOR`
@@ -69,13 +69,13 @@ export default function Updater(): null {
 
           case VersionUpgrade.MAJOR:
             // accept update if list is active or list in background
-            if (activeListUrls?.includes(listUrl) || UNSUPPORTED_LIST_URLS.includes(listUrl)) {
-              dispatch(acceptListUpdate(listUrl))
+            if (activeListUrls?.includes(listUrl) || UNSUPPORTED_LIST_URLS[pathName].includes(listUrl)) {
+              dispatch(acceptListUpdate({ url: listUrl, pathName }))
             }
         }
       }
     })
-  }, [dispatch, lists, activeListUrls])
+  }, [dispatch, lists, activeListUrls, pathName])
 
   return null
 }

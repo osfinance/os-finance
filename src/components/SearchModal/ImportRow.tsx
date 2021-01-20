@@ -6,7 +6,7 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { TYPE } from 'theme'
 import ListLogo from 'components/ListLogo'
 import { useActiveWeb3React } from 'hooks'
-import { useCombinedInactiveList } from 'state/lists/hooks'
+import { useCombinedInactiveList, usePathName } from 'state/lists/hooks'
 import useTheme from 'hooks/useTheme'
 import { ButtonPrimary } from 'components/Button'
 import styled from 'styled-components'
@@ -49,10 +49,11 @@ export default function ImportRow({
 }) {
   // gloabls
   const { chainId } = useActiveWeb3React()
+  const pathName = usePathName()
   const theme = useTheme()
 
   // check if token comes from list
-  const inactiveTokenList = useCombinedInactiveList()
+  const inactiveTokenList = useCombinedInactiveList(pathName)
   const list = chainId && inactiveTokenList?.[chainId]?.[token.address]?.list
 
   // check if already active on list or local storage tokens
