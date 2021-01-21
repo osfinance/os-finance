@@ -295,7 +295,7 @@ export function useTrackedTokenPairs(): [Token, Token][] {
  * @param token
  */
 export function toFlashLoanV1LiquidityToken(token: Token): Token {
-  return new Token(token.chainId, Pool.getAddress(token), 18, 'FL-V1', 'FlashLoan V1')
+  return new Token(token.chainId, Pool.getAddress(token), 18, 'DEER-V1', 'Deer FlashLoan V1')
 }
 
 /**

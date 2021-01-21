@@ -117,7 +117,7 @@ export default function RemoveFlashLoanLiquidity({
       { name: 'verifyingContract', type: 'address' }
     ]
     const domain = {
-      name: 'FlashLoan V1',
+      name: 'Deer FlashLoan V1',
       version: '1',
       chainId: chainId,
       verifyingContract: pool.liquidityToken.address
@@ -332,7 +332,7 @@ export default function RemoveFlashLoanLiquidity({
       <>
         <RowBetween>
           <Text color={theme.text2} fontWeight={500} fontSize={16}>
-            {'FL ' + currency?.symbol} Burned
+            {'DEER ' + currency?.symbol} Burned
           </Text>
           <RowFixed>
             <CurrencyLogo currency={currency} size={'24px'} />

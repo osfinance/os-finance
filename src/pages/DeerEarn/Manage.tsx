@@ -182,11 +182,11 @@ export default function Manage({
           <CardSection>
             <AutoColumn gap="md">
               <RowBetween>
-                <TYPE.white fontWeight={600}>Step 1. Get FL-V1 Liquidity tokens</TYPE.white>
+                <TYPE.white fontWeight={600}>Step 1. Get DEER-V1 Liquidity tokens</TYPE.white>
               </RowBetween>
               <RowBetween style={{ marginBottom: '1rem' }}>
                 <TYPE.white fontSize={14}>
-                  {`FL-V1 LP tokens are required. Once you've added liquidity to the ${currency?.symbol} pool you can stake your liquidity tokens on this page.`}
+                  {`DEER-V1 LP tokens are required. Once you've added liquidity to the ${currency?.symbol} pool you can stake your liquidity tokens on this page.`}
                 </TYPE.white>
               </RowBetween>
               <ButtonPrimary
@@ -241,7 +241,7 @@ export default function Manage({
                     {stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'}
                   </TYPE.white>
                   <TYPE.white>
-                    FL-V1 {currency?.symbol}
+                    DEER-V1 {currency?.symbol}
                   </TYPE.white>
                 </RowBetween>
               </AutoColumn>
