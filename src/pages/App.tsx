@@ -11,10 +11,7 @@ import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import AddFlashLoanLiquidity from './AddFlashLoanLiquidity'
-import {
-  RedirectOldAddLiquidityPathStructure,
-  RedirectToAddLiquidity
-} from './AddFlashLoanLiquidity/redirects'
+import { RedirectFlashLoanAddLiquidity, RedirectToAddLiquidity } from './AddFlashLoanLiquidity/redirects'
 import DeerEarn from './DeerEarn'
 import Manage from './DeerEarn/Manage'
 import FlashLoanPool from './FlashLoanPool'
@@ -90,9 +87,9 @@ export default function App() {
               <Route exact strict path="/vote" component={DeerVote} />
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
               <Route exact path="/add" component={AddFlashLoanLiquidity} />
-              <Route exact path="/add/:currencyId" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact path="/add/:currencyId" component={RedirectFlashLoanAddLiquidity} />
               <Route exact path="/create" component={AddFlashLoanLiquidity} />
-              <Route exact path="/create/:currencyId" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact path="/create/:currencyId" component={RedirectFlashLoanAddLiquidity} />
               <Route exact strict path="/remove/:currencyId" component={RemoveFlashLoanLiquidity} />
               <Route exact strict path="/deer/:currencyId" component={Manage} />
               <Route exact strict path="/vote/:id" component={VotePage} />
