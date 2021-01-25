@@ -334,7 +334,7 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
-            {t('pool')}
+            {t('flashLoan')}
           </StyledNavLink>
           <StyledNavLink id={`lending-nav-link`} to={'/lending'}>
             {t('lending')}
