@@ -315,9 +315,7 @@ export function useTrackedTokenPools(): Token[] {
         ? flatMap(Object.keys(tokens), tokenAddress => {
             const token = tokens[tokenAddress]
             // for each token on the current chain,
-            return (
-              [token]
-            )
+            return [token]
           })
         : [],
     [tokens, chainId]

@@ -49,10 +49,7 @@ export default function AddFlashLoanLiquidity({
 
   const currency = useCurrency(currencyId)
 
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      currency && currencyEquals(currency, WETH[chainId])
-  )
+  const oneCurrencyIsWETH = Boolean(chainId && currency && currencyEquals(currency, WETH[chainId]))
 
   const toggleWalletModal = useWalletModalToggle() // toggle wallet when disconnected
 
@@ -90,25 +87,19 @@ export default function AddFlashLoanLiquidity({
   }
 
   // get the max amounts user can add
-  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field])
-      }
-    },
-    {}
-  )
+  const maxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY].reduce((accumulator, field) => {
+    return {
+      ...accumulator,
+      [field]: maxAmountSpend(currencyBalances[field])
+    }
+  }, {})
 
-  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
-      }
-    },
-    {}
-  )
+  const atMaxAmounts: { [field in Field]?: TokenAmount } = [Field.CURRENCY].reduce((accumulator, field) => {
+    return {
+      ...accumulator,
+      [field]: maxAmounts[field]?.equalTo(parsedAmounts[field] ?? '0')
+    }
+  }, {})
 
   // check whether the user has approved the router on the tokens
   const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.CURRENCY], ROUTER_ADDRESS)
@@ -131,11 +122,8 @@ export default function AddFlashLoanLiquidity({
     if (currency === ETHER) {
       estimate = router.estimateGas.addLiquidityETH
       method = router.addLiquidityETH
-      args = [
-        account,
-        deadline.toHexString()
-      ]
-      value = BigNumber.from((parsedAmount).raw.toString())
+      args = [account, deadline.toHexString()]
+      value = BigNumber.from(parsedAmount.raw.toString())
     } else {
       estimate = router.estimateGas.addLiquidity
       method = router.addLiquidity
@@ -158,11 +146,7 @@ export default function AddFlashLoanLiquidity({
           setAttemptingTxn(false)
 
           addTransaction(response, {
-            summary:
-              'Add ' +
-              parsedAmounts[Field.CURRENCY]?.toSignificant(3) +
-              ' ' +
-              currencies[Field.CURRENCY]?.symbol
+            summary: 'Add ' + parsedAmounts[Field.CURRENCY]?.toSignificant(3) + ' ' + currencies[Field.CURRENCY]?.symbol
           })
 
           setTxHash(response.hash)
@@ -191,10 +175,7 @@ export default function AddFlashLoanLiquidity({
             <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
               {currencies[Field.CURRENCY]?.symbol}
             </Text>
-            <CurrencyLogo
-              currency={currencies[Field.CURRENCY]}
-              size={'24px'}
-            />
+            <CurrencyLogo currency={currencies[Field.CURRENCY]} size={'24px'} />
           </RowFlat>
         </LightCard>
       </AutoColumn>
@@ -204,15 +185,10 @@ export default function AddFlashLoanLiquidity({
           <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
             {liquidityMinted?.toSignificant(6)}
           </Text>
-          <CurrencyLogo
-            currency={currencies[Field.CURRENCY]}
-            size={'24px'}
-          />
+          <CurrencyLogo currency={currencies[Field.CURRENCY]} size={'24px'} />
         </RowFlat>
         <Row>
-          <Text fontSize="24px">
-            {currencies[Field.CURRENCY]?.symbol + ' Pool Tokens'}
-          </Text>
+          <Text fontSize="24px">{currencies[Field.CURRENCY]?.symbol + ' Pool Tokens'}</Text>
         </Row>
       </AutoColumn>
     )
@@ -345,25 +321,23 @@ export default function AddFlashLoanLiquidity({
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
             ) : (
               <AutoColumn gap={'md'}>
-                {(approval === ApprovalState.NOT_APPROVED ||
-                  approval === ApprovalState.PENDING) &&
-                  isValid && (
-                    <RowBetween>
-                      {(
-                        <ButtonPrimary
-                          onClick={approveCallback}
-                          disabled={approval === ApprovalState.PENDING}
-                          width={'100%'}
-                        >
-                          {approval === ApprovalState.PENDING ? (
-                            <Dots>Approving {currencies[Field.CURRENCY]?.symbol}</Dots>
-                          ) : (
-                            'Approve ' + currencies[Field.CURRENCY]?.symbol
-                          )}
-                        </ButtonPrimary>
-                      )}
-                    </RowBetween>
-                  )}
+                {(approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING) && isValid && (
+                  <RowBetween>
+                    {
+                      <ButtonPrimary
+                        onClick={approveCallback}
+                        disabled={approval === ApprovalState.PENDING}
+                        width={'100%'}
+                      >
+                        {approval === ApprovalState.PENDING ? (
+                          <Dots>Approving {currencies[Field.CURRENCY]?.symbol}</Dots>
+                        ) : (
+                          'Approve ' + currencies[Field.CURRENCY]?.symbol
+                        )}
+                      </ButtonPrimary>
+                    }
+                  </RowBetween>
+                )}
                 <ButtonError
                   onClick={() => {
                     expertMode ? onAdd() : setShowConfirm(true)
@@ -387,10 +361,7 @@ export default function AddFlashLoanLiquidity({
           </AutoColumn>
         ) : null
       ) : (
-        <UnsupportedCurrencyFooter
-          show={addIsUnsupported}
-          currencies={[currencies.CURRENCY]}
-        />
+        <UnsupportedCurrencyFooter show={addIsUnsupported} currencies={[currencies.CURRENCY]} />
       )}
     </>
   )

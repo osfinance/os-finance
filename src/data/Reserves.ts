@@ -67,15 +67,11 @@ export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair 
 export function usePools(currencies: (Currency | undefined)[]): [PairState, Pool | null][] {
   const { chainId } = useActiveWeb3React()
 
-  const tokens = useMemo(
-    () =>
-      currencies.map((currency) => wrappedCurrency(currency, chainId)),
-    [chainId, currencies]
-  )
+  const tokens = useMemo(() => currencies.map(currency => wrappedCurrency(currency, chainId)), [chainId, currencies])
 
   const poolAddresses = useMemo(
     () =>
-      tokens.map((token) => {
+      tokens.map(token => {
         return token ? Pool.getAddress(token) : undefined
       }),
     [tokens]
@@ -91,10 +87,7 @@ export function usePools(currencies: (Currency | undefined)[]): [PairState, Pool
       if (loading) return [PairState.LOADING, null]
       if (!token) return [PairState.INVALID, null]
       if (!reserve) return [PairState.NOT_EXISTS, null]
-      return [
-        PairState.EXISTS,
-        new Pool(new TokenAmount(token, reserve.toString()))
-      ]
+      return [PairState.EXISTS, new Pool(new TokenAmount(token, reserve.toString()))]
     })
   }, [results, tokens])
 }

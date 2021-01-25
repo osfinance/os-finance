@@ -70,9 +70,7 @@ export function useDerivedMintInfo(
     pairState === PairState.NOT_EXISTS || Boolean(totalSupply && JSBI.equal(totalSupply.raw, ZERO))
 
   // balances
-  const balances = useCurrencyBalances(account ?? undefined, [
-    currencies[Field.CURRENCY]
-  ])
+  const balances = useCurrencyBalances(account ?? undefined, [currencies[Field.CURRENCY]])
   const currencyBalances: { [field in Field]?: CurrencyAmount } = {
     [Field.CURRENCY]: balances[0]
   }

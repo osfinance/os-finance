@@ -37,21 +37,14 @@ export default function FlashLoanPoolFider() {
 
   const validPoolNoLiquidity: boolean =
     poolState === PairState.NOT_EXISTS ||
-    Boolean(
-      poolState === PairState.EXISTS &&
-        pool &&
-        JSBI.equal(pool.reserve.raw, JSBI.BigInt(0))
-    )
+    Boolean(poolState === PairState.EXISTS && pool && JSBI.equal(pool.reserve.raw, JSBI.BigInt(0)))
 
   const position: TokenAmount | undefined = useTokenBalance(account ?? undefined, pool?.liquidityToken)
   const hasPosition = Boolean(position && JSBI.greaterThan(position.raw, JSBI.BigInt(0)))
 
-  const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
-      setCurrency(currency)
-    },
-    []
-  )
+  const handleCurrencySelect = useCallback((currency: Currency) => {
+    setCurrency(currency)
+  }, [])
 
   const handleSearchDismiss = useCallback(() => {
     setShowSearch(false)
@@ -126,9 +119,7 @@ export default function FlashLoanPoolFider() {
             <LightCard padding="45px 10px">
               <AutoColumn gap="sm" justify="center">
                 <Text textAlign="center">No pool found.</Text>
-                <StyledInternalLink to={`/add/${currencyId(currency)}`}>
-                  Create pool.
-                </StyledInternalLink>
+                <StyledInternalLink to={`/add/${currencyId(currency)}`}>Create pool.</StyledInternalLink>
               </AutoColumn>
             </LightCard>
           ) : poolState === PairState.INVALID ? (

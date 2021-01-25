@@ -4,11 +4,7 @@ import JSBI from 'jsbi'
 import { pack, keccak256 } from '@ethersproject/solidity'
 import { getCreate2Address } from '@ethersproject/address'
 
-import {
-  BigintIsh,
-  MINIMUM_LIQUIDITY,
-  ChainId
-} from '@uniswap/sdk'
+import { BigintIsh, MINIMUM_LIQUIDITY, ChainId } from '@uniswap/sdk'
 import { InsufficientInputAmountError } from '@uniswap/sdk'
 import { Token } from '@uniswap/sdk'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from 'constants/flashLoan'
@@ -21,27 +17,26 @@ export const _1000 = JSBI.BigInt(1000)
 let POOL_ADDRESS_CACHE: { [tokenAddress: string]: string } = {}
 
 export function parseBigintIsh(bigintIsh: BigintIsh): JSBI {
-    return bigintIsh instanceof JSBI
-      ? bigintIsh
-      : typeof bigintIsh === 'bigint'
-      ? JSBI.BigInt(bigintIsh.toString())
-      : JSBI.BigInt(bigintIsh)
-  }
+  return bigintIsh instanceof JSBI
+    ? bigintIsh
+    : typeof bigintIsh === 'bigint'
+    ? JSBI.BigInt(bigintIsh.toString())
+    : JSBI.BigInt(bigintIsh)
+}
 
 export class Pool {
   public readonly liquidityToken: Token
   private readonly tokenAmount: TokenAmount
 
   public static getAddress(token: Token): string {
-
     if (POOL_ADDRESS_CACHE?.[token.address] === undefined) {
       POOL_ADDRESS_CACHE = {
         ...POOL_ADDRESS_CACHE,
         [token.address]: getCreate2Address(
-            FACTORY_ADDRESS,
-            keccak256(['bytes'], [pack(['address'], [token.address])]),
-            INIT_CODE_HASH
-          )
+          FACTORY_ADDRESS,
+          keccak256(['bytes'], [pack(['address'], [token.address])]),
+          INIT_CODE_HASH
+        )
       }
     }
 
@@ -82,10 +77,7 @@ export class Pool {
     return this.tokenAmount
   }
 
-  public getLiquidityMinted(
-    totalSupply: TokenAmount,
-    tokenAmount: TokenAmount
-  ): TokenAmount {
+  public getLiquidityMinted(totalSupply: TokenAmount, tokenAmount: TokenAmount): TokenAmount {
     invariant(totalSupply.token.equals(this.liquidityToken), 'LIQUIDITY')
     invariant(tokenAmount.token.equals(this.token), 'TOKEN')
 
@@ -106,7 +98,7 @@ export class Pool {
     token: Token,
     totalSupply: TokenAmount,
     liquidity: TokenAmount,
-    feeOn: boolean = false,
+    feeOn = false,
     kLast?: BigintIsh
   ): TokenAmount {
     invariant(this.involvesToken(token), 'TOKEN')
@@ -135,9 +127,6 @@ export class Pool {
       }
     }
 
-    return new TokenAmount(
-      token,
-      JSBI.divide(JSBI.multiply(liquidity.raw, this.reserve.raw), totalSupplyAdjusted.raw)
-    )
+    return new TokenAmount(token, JSBI.divide(JSBI.multiply(liquidity.raw, this.reserve.raw), totalSupplyAdjusted.raw))
   }
 }

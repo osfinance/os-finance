@@ -106,7 +106,9 @@ export default function Pool() {
   const v1IsLoading =
     fetchingV1PoolBalances || v1Pools?.length < liquidityTokensWithBalances.length || v1Pools?.some(V1Pool => !V1Pool)
 
-  const allV1PoolsWithLiquidity = v1Pools.map(([, pool]) => pool).filter((v1Pool): v1Pool is FlashLoanPool => Boolean(v1Pool))
+  const allV1PoolsWithLiquidity = v1Pools
+    .map(([, pool]) => pool)
+    .filter((v1Pool): v1Pool is FlashLoanPool => Boolean(v1Pool))
 
   const hasV1Liquidity = useUserHasLiquidityInAllTokens()
 

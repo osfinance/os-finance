@@ -50,10 +50,7 @@ export default function RemoveFlashLoanLiquidity({
 }: RouteComponentProps<{ currencyId: string }>) {
   const currency = useCurrency(currencyId) ?? undefined
   const { account, chainId, library } = useActiveWeb3React()
-  const token = useMemo(() => wrappedCurrency(currency, chainId), [
-    currency,
-    chainId
-  ])
+  const token = useMemo(() => wrappedCurrency(currency, chainId), [currency, chainId])
 
   const theme = useContext(ThemeContext)
 
@@ -205,21 +202,12 @@ export default function RemoveFlashLoanLiquidity({
       // removeLiquidityETH
       if (oneCurrencyIsETH) {
         methodNames = ['removeLiquidityETH']
-        args = [
-          liquidityAmount.raw.toString(),
-          account,
-          deadline.toHexString()
-        ]
+        args = [liquidityAmount.raw.toString(), account, deadline.toHexString()]
       }
       // removeLiquidity
       else {
         methodNames = ['removeLiquidity']
-        args = [
-          token.address,
-          liquidityAmount.raw.toString(),
-          account,
-          deadline.toHexString()
-        ]
+        args = [token.address, liquidityAmount.raw.toString(), account, deadline.toHexString()]
       }
     }
     // we have a signataure, use permit versions of remove liquidity
@@ -285,11 +273,7 @@ export default function RemoveFlashLoanLiquidity({
           setAttemptingTxn(false)
 
           addTransaction(response, {
-            summary:
-              'Remove ' +
-              parsedAmounts[Field.CURRENCY]?.toSignificant(3) +
-              ' ' +
-              currency?.symbol
+            summary: 'Remove ' + parsedAmounts[Field.CURRENCY]?.toSignificant(3) + ' ' + currency?.symbol
           })
 
           setTxHash(response.hash)
@@ -322,7 +306,6 @@ export default function RemoveFlashLoanLiquidity({
             </Text>
           </RowFixed>
         </RowBetween>
-
       </AutoColumn>
     )
   }
@@ -350,9 +333,7 @@ export default function RemoveFlashLoanLiquidity({
     )
   }
 
-  const pendingText = `Removing ${parsedAmounts[Field.CURRENCY]?.toSignificant(6)} ${
-    currency?.symbol
-  }`
+  const pendingText = `Removing ${parsedAmounts[Field.CURRENCY]?.toSignificant(6)} ${currency?.symbol}`
 
   const liquidityPercentChangeCallback = useCallback(
     (value: number) => {
@@ -362,10 +343,7 @@ export default function RemoveFlashLoanLiquidity({
   )
 
   const oneCurrencyIsETH = currency === ETHER
-  const oneCurrencyIsWETH = Boolean(
-    chainId &&
-      (currency && currencyEquals(WETH[chainId], currency))
-  )
+  const oneCurrencyIsWETH = Boolean(chainId && currency && currencyEquals(WETH[chainId], currency))
 
   const handleSelectCurrency = useCallback(
     (currency: Currency) => {
@@ -478,16 +456,12 @@ export default function RemoveFlashLoanLiquidity({
                     {chainId && (oneCurrencyIsWETH || oneCurrencyIsETH) ? (
                       <RowBetween style={{ justifyContent: 'flex-end' }}>
                         {oneCurrencyIsETH ? (
-                          <StyledInternalLink
-                            to={`/remove/${currency === ETHER ? WETH[chainId].address : currencyId}`}
-                          >
+                          <StyledInternalLink to={`/remove/${currency === ETHER ? WETH[chainId].address : currencyId}`}>
                             Receive WETH
                           </StyledInternalLink>
                         ) : oneCurrencyIsWETH ? (
                           <StyledInternalLink
-                            to={`/remove/${
-                              currency && currencyEquals(currency, WETH[chainId]) ? 'ETH' : currencyId
-                            }`}
+                            to={`/remove/${currency && currencyEquals(currency, WETH[chainId]) ? 'ETH' : currencyId}`}
                           >
                             Receive ETH
                           </StyledInternalLink>

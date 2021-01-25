@@ -11,7 +11,7 @@ import { TYPE } from '../../theme'
 export function PoolPriceBar({
   currencies,
   noLiquidity,
-  poolTokenPercentage,
+  poolTokenPercentage
 }: {
   currencies: { [field in Field]?: Currency }
   noLiquidity?: boolean

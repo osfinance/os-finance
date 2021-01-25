@@ -131,7 +131,6 @@ export default function Manage({
   const countUpAmount = stakingInfo?.earnedAmount?.toFixed(6) ?? '0'
   const countUpAmountPrevious = usePrevious(countUpAmount) ?? '0'
 
-
   const toggleWalletModal = useWalletModalToggle()
 
   const handleDepositClick = useCallback(() => {
@@ -145,9 +144,7 @@ export default function Manage({
   return (
     <PageWrapper gap="lg" justify="center">
       <RowBetween style={{ gap: '24px' }}>
-        <TYPE.mediumHeader style={{ margin: 0 }}>
-          {currency?.symbol} Liquidity Mining
-        </TYPE.mediumHeader>
+        <TYPE.mediumHeader style={{ margin: 0 }}>{currency?.symbol} Liquidity Mining</TYPE.mediumHeader>
         <CurrencyLogo currency={currency ?? undefined} size={'24px'} />
       </RowBetween>
 
@@ -156,7 +153,9 @@ export default function Manage({
           <AutoColumn gap="sm">
             <TYPE.body style={{ margin: 0 }}>Total deposits</TYPE.body>
             <TYPE.body fontSize={24} fontWeight={500}>
-              {`${valueOfTotalStakedAmountInToken?.toSignificant(4, { groupSeparator: ',' }) ?? '-'} ${currency?.symbol}`}
+              {`${valueOfTotalStakedAmountInToken?.toSignificant(4, { groupSeparator: ',' }) ?? '-'} ${
+                currency?.symbol
+              }`}
             </TYPE.body>
           </AutoColumn>
         </PoolData>
@@ -240,9 +239,7 @@ export default function Manage({
                   <TYPE.white fontSize={36} fontWeight={600}>
                     {stakingInfo?.stakedAmount?.toSignificant(6) ?? '-'}
                   </TYPE.white>
-                  <TYPE.white>
-                    DEER-V1 {currency?.symbol}
-                  </TYPE.white>
+                  <TYPE.white>DEER-V1 {currency?.symbol}</TYPE.white>
                 </RowBetween>
               </AutoColumn>
             </CardSection>

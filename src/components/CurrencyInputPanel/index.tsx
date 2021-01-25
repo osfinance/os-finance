@@ -226,9 +226,7 @@ export default function CurrencyInputPanel({
                   {pair?.token0.symbol}:{pair?.token1.symbol}
                 </StyledTokenName>
               ) : pool ? (
-                <StyledTokenName className="pair-name-container">
-                  FL-{pool?.token.symbol}
-                </StyledTokenName>
+                <StyledTokenName className="pair-name-container">FL-{pool?.token.symbol}</StyledTokenName>
               ) : (
                 <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                   {(currency && currency.symbol && currency.symbol.length > 20
