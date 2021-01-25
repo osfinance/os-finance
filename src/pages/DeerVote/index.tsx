@@ -10,7 +10,7 @@ import { ButtonPrimary } from '../../components/Button'
 import { Button } from 'rebass/styled-components'
 import { darken } from 'polished'
 import { CardSection, DataCard, CardNoise, CardBGImage } from '../../components/earn/styled'
-import { useAllProposalData, ProposalData, useUserVotes, useUserDelegatee } from '../../state/governance/hooks'
+import { ProposalData, useUserVotes, useUserDelegatee } from '../../state/governance/hooks'
 import DelegateModal from '../../components/vote/DelegateModal'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
@@ -110,7 +110,7 @@ export default function DeerVote() {
   const toggleDelegateModal = useToggleDelegateModal()
 
   // get data to list all proposals
-  const allProposals: ProposalData[] = useAllProposalData()
+  const allProposals: ProposalData[] = []
 
   // user data
   const availableVotes: TokenAmount | undefined = useUserVotes()
@@ -136,21 +136,14 @@ export default function DeerVote() {
           <CardSection>
             <AutoColumn gap="md">
               <RowBetween>
-                <TYPE.white fontWeight={600}>Uniswap Governance</TYPE.white>
+                <TYPE.white fontWeight={600}>Deerfi Governance</TYPE.white>
               </RowBetween>
               <RowBetween>
                 <TYPE.white fontSize={14}>
-                  DEER tokens represent voting shares in Uniswap governance. You can vote on each proposal yourself or
+                  DEER tokens represent voting shares in Deerfi governance. You can vote on each proposal yourself or
                   delegate your votes to a third party.
                 </TYPE.white>
               </RowBetween>
-              <ExternalLink
-                style={{ color: 'white', textDecoration: 'underline' }}
-                href="https://uniswap.org/blog/uni"
-                target="_blank"
-              >
-                <TYPE.white fontSize={14}>Read more about Uniswap governance</TYPE.white>
-              </ExternalLink>
             </AutoColumn>
           </CardSection>
           <CardBGImage />

@@ -104,17 +104,25 @@ export default function Menu() {
             <Code size={14} />
             Code
           </MenuItem>
+          <MenuItem id="link" href="https://twitter.com/deerfi_com">
+            <MessageCircle size={14} />
+            Twitter
+          </MenuItem>
+          <MenuItem id="link" href="https://discord.gg/SHdfFgX">
+            <MessageCircle size={14} />
+            Discord
+          </MenuItem>
           <MenuItem id="link" href="https://t.me/deerfi">
             <MessageCircle size={14} />
             Telegram
           </MenuItem>
-          <MenuItem id="link" href="https://long.deerfi.com">
-            <Globe size={14} />
-            Long
-          </MenuItem>
           <MenuItem id="link" href="https://medium.com/deerfi">
             <BookOpen size={14} />
             Medium
+          </MenuItem>
+          <MenuItem id="link" href="https://long.deerfi.com">
+            <Globe size={14} />
+            Long
           </MenuItem>
         </MenuFlyout>
       )}
