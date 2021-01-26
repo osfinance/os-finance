@@ -40,7 +40,7 @@ export function Countdown({ exactEnd }: { exactEnd?: Date }) {
       message = 'Rewards end in'
       timeRemaining = timeUntilEnd
     } else {
-      message = 'Rewards have ended!'
+      message = 'Rewards coming soon!'
       timeRemaining = Infinity
     }
   }
