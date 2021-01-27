@@ -1,3 +1,5 @@
+import QuestionHelper from 'components/QuestionHelper'
+import TransactionSettings from 'components/TransactionSettings'
 import React, { useContext, useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
@@ -16,10 +18,8 @@ import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
 import Modal from '../Modal'
-import QuestionHelper from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import Toggle from '../Toggle'
-import TransactionSettings from '../TransactionSettings'
 
 const StyledMenuIcon = styled(Settings)`
   height: 20px;
@@ -165,7 +165,7 @@ export default function SettingsTab() {
                 error={true}
                 padding={'12px'}
                 onClick={() => {
-                  if (window.prompt(`Please type the word "confirm" to enable expert mode.`) === 'confirm') {
+                  if (window.prompt(t('confirmExpertMode')) === t('confirm')) {
                     toggleExpertMode()
                     setShowConfirmation(false)
                   }
