@@ -463,7 +463,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [DEFAULT_TOKEN_LIST_URL['sushiswap']] }
+        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
       })
     })
     it('adds to url keys if not present already on enable', () => {
@@ -500,7 +500,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        activeOsListUrls: { uniswap: ['fake-url-invalid'], sushiswap: [DEFAULT_TOKEN_LIST_URL['sushiswap']] }
+        activeOsListUrls: { uniswap: ['fake-url-invalid'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
       })
     })
     it('enable works if list already added', () => {
@@ -531,7 +531,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [DEFAULT_TOKEN_LIST_URL['sushiswap']] }
+        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
       })
     })
   })
@@ -577,7 +577,7 @@ describe('list reducer', () => {
       it('all lists are empty', () => {
         const s = store.getState()
         Object.keys(s.byOsUrl['uniswap']).forEach(url => {
-          if (url === DEFAULT_TOKEN_LIST_URL['uniswap']) {
+          if (url === DEFAULT_ACTIVE_LIST_URLS['uniswap'][0]) {
             expect(s.byOsUrl['uniswap'][url]).toEqual({
               error: null,
               current: null,
@@ -649,7 +649,7 @@ describe('list reducer', () => {
       })
 
       it('adds all the lists in the default list of lists', () => {
-        expect(Object.keys(store.getState().byOsUrl.uniswap)).toContain(DEFAULT_TOKEN_LIST_URL.uniswap)
+        expect(Object.keys(store.getState().byOsUrl.uniswap)).toContain(DEFAULT_ACTIVE_LIST_URLS.uniswap[0])
       })
 
       it('each of those initialized lists is empty', () => {
@@ -675,7 +675,7 @@ describe('list reducer', () => {
         expect(store.getState().activeOsListUrls).toEqual(DEFAULT_ACTIVE_LIST_URLS)
       })
       it('default list is initialized', () => {
-        expect(store.getState().byOsUrl['uniswap'][DEFAULT_TOKEN_LIST_URL['uniswap']]).toEqual({
+        expect(store.getState().byOsUrl['uniswap'][DEFAULT_ACTIVE_LIST_URLS['uniswap'][0]]).toEqual({
           error: null,
           current: null,
           loadingRequestId: null,
