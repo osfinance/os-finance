@@ -50,4 +50,7 @@ export const DEFAULT_LIST_OF_LISTS = {
 }
 
 // default lists to be 'active' aka searched across
-export const DEFAULT_ACTIVE_LIST_URLS: { uniswap: string[], sushiswap: string[] } = { uniswap: [GEMINI_LIST], sushiswap: [SUSHISWAP_DEFAULT_LIST_URL] }
+export const DEFAULT_ACTIVE_LIST_URLS: { uniswap: string[]; sushiswap: string[] } = {
+  uniswap: [GEMINI_LIST],
+  sushiswap: [SUSHISWAP_DEFAULT_LIST_URL]
+}
