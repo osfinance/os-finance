@@ -1,22 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react'
-import { createContext } from 'react'
 
-export const Context = createContext<HomeContext>({
-  home: []
-})
-export interface HOME_DEX {
-  name: string
-  icon: React.ReactNode
-  home: string
-  id: string
-  sort: number
-  description: string
-  highlight: boolean
-}
-
-export interface HomeContext {
-  home: HOME_DEX[]
-}
+import Context from './context'
+import { Home as HOME_DEX } from './types'
 
 const NAME_FOR_DEX: { [key: string]: string } = {
   UNISWAP_DEX: 'Uniswap',
