@@ -30,7 +30,7 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
     Object.keys(lists).forEach(url =>
       fetchList(url).catch(error => console.debug('interval list fetching error', error))
     )
-  }, [fetchList, isWindowVisible, lists, pathName])
+  }, [fetchList, isWindowVisible, lists])
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
   // whenever a list is not loaded and not loading, try again to load it
