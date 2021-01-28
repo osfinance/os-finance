@@ -8,7 +8,12 @@ import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
-import { useExpertModeManager, useUserSingleHopOnly, useUserSlippageTolerance, useUserTransactionTTL } from '../../state/user/hooks'
+import {
+  useExpertModeManager,
+  useUserSingleHopOnly,
+  useUserSlippageTolerance,
+  useUserTransactionTTL
+} from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
