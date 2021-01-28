@@ -51,7 +51,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedListUrl: undefined
+          selectedOsListUrl: undefined
         })
       })
 

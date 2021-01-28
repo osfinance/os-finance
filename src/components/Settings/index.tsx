@@ -3,13 +3,12 @@ import TransactionSettings from 'components/TransactionSettings'
 import React, { useContext, useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
-import { useExpertModeManager, useUserSingleHopOnly } from '../../state/user/hooks'
+import { useExpertModeManager, useUserSingleHopOnly, useUserSlippageTolerance, useUserTransactionTTL } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
@@ -121,10 +120,6 @@ export default function SettingsTab() {
   const node = useRef<HTMLDivElement>()
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
-
-  const location = useLocation()
-  const page = location.pathname.split('/')[1]
-  const showTransactionSetting = page === 'uniswap' || page === 'sushiswap' ? true : false
 
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()

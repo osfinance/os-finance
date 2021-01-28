@@ -129,25 +129,6 @@ export function useAllCTokens(): { [address: string]: CToken } {
   }, [chainId, allCTokens])
 }
 
-export function useAllCTokens(): { [address: string]: CToken } {
-  const { chainId } = useActiveWeb3React()
-  const allCTokens = useCTokens()
-
-  return useMemo(() => {
-    if (!chainId) return {}
-    const data = allCTokens.map((item: any) => {
-      return {
-        ...item?.[1]
-      }
-    })
-    const allData: any = {}
-    data.forEach((item: CToken) => {
-      allData[item.address] = { ...item }
-    })
-    return allData
-  }, [chainId, allCTokens])
-}
-
 // Check if currency is included in custom list from user storage
 export function useIsUserAddedToken(currency: Currency | undefined | null): boolean {
   const userAddedTokens = useUserAddedTokens()

@@ -39,7 +39,14 @@ import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
-import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import {
+  OpenClaimAddressModalAndRedirectToSwap,
+  RedirectPathToCompoundOnly,
+  RedirectPathToSushiswapOnly,
+  RedirectPathToSwapOnly,
+  RedirectPathToUniswapOnly,
+  RedirectToSwap
+} from './Swap/redirects'
 
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'

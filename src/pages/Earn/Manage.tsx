@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { JSBI, TokenAmount, ETHER } from '@uniswap/sdk'
 import { RouteComponentProps } from 'react-router-dom'
