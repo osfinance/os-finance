@@ -27,7 +27,7 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
   const fetchList = useFetchListCallback(pathName)
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
-    Object.keys(lists[pathName]).forEach(url =>
+    Object.keys(lists).forEach(url =>
       fetchList(url).catch(error => console.debug('interval list fetching error', error))
     )
   }, [fetchList, isWindowVisible, lists])

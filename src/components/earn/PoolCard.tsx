@@ -15,6 +15,7 @@ import { useTotalSupply } from '../../data/TotalSupply'
 import { usePair } from '../../data/Reserves'
 import useUSDCPrice from '../../utils/useUSDCPrice'
 import { BIG_INT_SECONDS_IN_WEEK } from '../../constants'
+import { usePathName } from 'state/lists/hooks'
 
 const StatContainer = styled.div`
   display: flex;
@@ -69,6 +70,7 @@ const BottomSection = styled.div<{ showBackground: boolean }>`
 `
 
 export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) {
+  const pathName = usePathName()
   const token0 = stakingInfo.tokens[0]
   const token1 = stakingInfo.tokens[1]
 
@@ -117,7 +119,7 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
           {currency0.symbol}-{currency1.symbol}
         </TYPE.white>
 
-        <StyledInternalLink to={`/uni/${currencyId(currency0)}/${currencyId(currency1)}`} style={{ width: '100%' }}>
+        <StyledInternalLink to={`/${pathName}/uni/${currencyId(currency0)}/${currencyId(currency1)}`} style={{ width: '100%' }}>
           <ButtonPrimary padding="8px" borderRadius="8px">
             {isStaking ? 'Manage' : 'Deposit'}
           </ButtonPrimary>

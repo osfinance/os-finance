@@ -10,6 +10,7 @@ import { FixedHeightRow, HoverCard } from './index'
 import DoubleCurrencyLogo from '../DoubleLogo'
 import { useActiveWeb3React } from '../../hooks'
 import { ThemeContext } from 'styled-components'
+import { usePathName } from 'state/lists/hooks'
 
 interface PositionCardProps extends RouteComponentProps<{}> {
   token: Token
@@ -18,6 +19,7 @@ interface PositionCardProps extends RouteComponentProps<{}> {
 
 function V1PositionCard({ token, V1LiquidityBalance }: PositionCardProps) {
   const theme = useContext(ThemeContext)
+  const pathName = usePathName()
 
   const { chainId } = useActiveWeb3React()
 
@@ -55,7 +57,7 @@ function V1PositionCard({ token, V1LiquidityBalance }: PositionCardProps) {
               style={{ backgroundColor: 'transparent' }}
               width="28%"
               as={Link}
-              to={`/remove/v1/${V1LiquidityBalance.token.address}`}
+              to={`/${pathName}/remove/v1/${V1LiquidityBalance.token.address}`}
             >
               Remove
             </ButtonSecondary>

@@ -28,6 +28,7 @@ import { usePool } from '../../data/Reserves'
 import usePrevious from '../../hooks/usePrevious'
 import { BIG_INT_ZERO, BIG_INT_SECONDS_IN_WEEK } from '../../constants'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { usePathName } from 'state/lists/hooks'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 640px;
@@ -92,6 +93,7 @@ export default function Manage({
   }
 }: RouteComponentProps<{ currencyId: string }>) {
   const { account, chainId } = useActiveWeb3React()
+  const pathName = usePathName()
 
   // get currencies and pool
   const currency = useCurrency(currencyId)
@@ -193,7 +195,7 @@ export default function Manage({
                 borderRadius="8px"
                 width={'fit-content'}
                 as={Link}
-                to={`/add/${currency && toCurrencyId(currency)}`}
+                to={`/${pathName}/add/${currency && toCurrencyId(currency)}`}
               >
                 {`Add ${currency?.symbol} liquidity`}
               </ButtonPrimary>
