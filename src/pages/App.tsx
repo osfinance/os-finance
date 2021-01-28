@@ -12,7 +12,10 @@ import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import AddFlashLoanLiquidity from './AddFlashLoanLiquidity'
-import { RedirectFlashLoanAddLiquidity, RedirectToAddLiquidity as FlashLoanRedirectToAddLiquidity } from './AddFlashLoanLiquidity/redirects'
+import {
+  RedirectFlashLoanAddLiquidity,
+  RedirectToAddLiquidity as FlashLoanRedirectToAddLiquidity
+} from './AddFlashLoanLiquidity/redirects'
 import DeerEarn from './DeerEarn'
 import DeerManage from './DeerEarn/Manage'
 import FlashLoanPool from './FlashLoanPool'
@@ -36,11 +39,7 @@ import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
-import {
-  OpenClaimAddressModalAndRedirectToSwap,
-  RedirectPathToSwapOnly,
-  RedirectToSwap
-} from './Swap/redirects'
+import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 
 import Vote from './Vote'
 import VotePage from './Vote/VotePage'
