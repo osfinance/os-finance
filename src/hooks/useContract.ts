@@ -5,6 +5,7 @@ import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/Stak
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
 import { ChainId, WETH } from '@uniswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as IFlashLoanV1PoolABI } from '../constants/flashLoan/IFlashLoanV1Pool.json'
 import { useMemo } from 'react'
 import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, UNI } from '../constants'
 import {
@@ -111,6 +112,10 @@ export function useBytes32TokenContract(tokenAddress?: string, withSignerIfPossi
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+}
+
+export function useFlashLoanPoolContract(poolAddress?: string, withSignerIfPossible?: boolean): Contract | null {
+  return useContract(poolAddress, IFlashLoanV1PoolABI, withSignerIfPossible)
 }
 
 export function useMulticallContract(): Contract | null {

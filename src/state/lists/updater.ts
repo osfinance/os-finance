@@ -1,35 +1,42 @@
+import { useAllLists } from 'state/lists/hooks'
+import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import { getVersionUpgrade, minVersionBump, VersionUpgrade } from '@uniswap/token-lists'
 import { useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { useFetchListCallback } from '../../hooks/useFetchListCallback'
 import useInterval from '../../hooks/useInterval'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
-import { addPopup } from '../application/actions'
-import { AppDispatch, AppState } from '../index'
+import { AppDispatch } from '../index'
 import { acceptListUpdate, PathNameType } from './actions'
+import { useActiveListUrls } from './hooks'
+import { useAllInactiveTokens } from 'hooks/Tokens'
 
 export default function Updater({ pathName }: { pathName: PathNameType }): null {
   const { library } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
-  const lists = useSelector<AppState, AppState['lists']['byOsUrl']>(state => state.lists.byOsUrl)
-  const selectedListUrl = useSelector<AppState, AppState['lists']['selectedOsListUrl']>(
-    state => state.lists.selectedOsListUrl
-  )
   const isWindowVisible = useIsWindowVisible()
+
+  // get all loaded lists, and the active urls
+  const lists = useAllLists(pathName)
+  const activeListUrls = useActiveListUrls(pathName)
+
+  // initiate loading
+  useAllInactiveTokens(pathName)
+
   const fetchList = useFetchListCallback(pathName)
   const fetchAllListsCallback = useCallback(() => {
     if (!isWindowVisible) return
     Object.keys(lists[pathName]).forEach(url =>
       fetchList(url).catch(error => console.debug('interval list fetching error', error))
     )
-  }, [fetchList, isWindowVisible, lists, pathName])
+  }, [fetchList, isWindowVisible, lists])
   // fetch all lists every 10 minutes, but only after we initialize library
   useInterval(fetchAllListsCallback, library ? 1000 * 60 * 10 : null)
   // whenever a list is not loaded and not loading, try again to load it
   useEffect(() => {
-    Object.keys(lists[pathName]).forEach(listUrl => {
-      const list = lists[pathName][listUrl]
+    Object.keys(lists).forEach(listUrl => {
+      const list = lists[listUrl]
       if (!list.current && !list.loadingRequestId && !list.error) {
         fetchList(listUrl).catch(error => console.debug('list added fetching error', error))
       }
@@ -37,8 +44,8 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
   }, [dispatch, fetchList, library, lists, pathName])
   // automatically update lists if versions are minor/patch
   useEffect(() => {
-    Object.keys(lists[pathName]).forEach(listUrl => {
-      const list = lists[pathName][listUrl]
+    Object.keys(lists).forEach(listUrl => {
+      const list = lists[listUrl]
       if (list.current && list.pendingUpdate) {
         const bump = getVersionUpgrade(list.current.version, list.pendingUpdate.version)
         switch (bump) {
@@ -50,22 +57,6 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
             // automatically update minor/patch as long as bump matches the min update
             if (bump >= min) {
               dispatch(acceptListUpdate({ url: listUrl, pathName }))
-              if (listUrl === selectedListUrl?.[pathName]) {
-                dispatch(
-                  addPopup({
-                    key: listUrl,
-                    content: {
-                      listUpdate: {
-                        listUrl,
-                        pathName,
-                        oldList: list.current,
-                        newList: list.pendingUpdate,
-                        auto: true
-                      }
-                    }
-                  })
-                )
-              }
             } else {
               console.error(
                 `List at url ${listUrl} could not automatically update because the version bump was only PATCH/MINOR while the update had breaking changes and should have been MAJOR`
@@ -73,26 +64,14 @@ export default function Updater({ pathName }: { pathName: PathNameType }): null 
             }
             break
           case VersionUpgrade.MAJOR:
-            if (listUrl === selectedListUrl?.[pathName]) {
-              dispatch(
-                addPopup({
-                  key: listUrl,
-                  content: {
-                    listUpdate: {
-                      listUrl,
-                      pathName,
-                      auto: false,
-                      oldList: list.current,
-                      newList: list.pendingUpdate
-                    }
-                  },
-                  removeAfterMs: null
-                })
-              )
+            // accept update if list is active or list in background
+            if (activeListUrls?.includes(listUrl) || UNSUPPORTED_LIST_URLS[pathName].includes(listUrl)) {
+              dispatch(acceptListUpdate({ url: listUrl, pathName }))
             }
         }
       }
     })
-  }, [dispatch, lists, pathName, selectedListUrl])
+  }, [dispatch, lists, activeListUrls, pathName])
+
   return null
 }

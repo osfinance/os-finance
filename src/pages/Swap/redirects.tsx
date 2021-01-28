@@ -50,7 +50,6 @@ export function RedirectToSwap(props: RouteComponentProps<{ outputCurrency: stri
       setPathName(router)
     }
   }, [router])
-
   return (
     <Redirect
       to={{

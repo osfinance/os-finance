@@ -7,7 +7,6 @@ import { SearchInput } from '../../components/SearchModal/styleds'
 import { useAllTokenV1Exchanges } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
-import { useSelectedTokenList } from '../../state/lists/hooks'
 import { useTokenBalancesWithLoadingIndicator } from '../../state/wallet/hooks'
 import { BackArrow, TYPE } from '../../theme'
 import { LightCard } from '../../components/Card'
@@ -18,19 +17,21 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { Dots } from '../../components/swap/styleds'
 import { useAddUserToken } from '../../state/user/hooks'
 import { isTokenOnList } from '../../utils'
+import { useCombinedActiveList, usePathName } from '../../state/lists/hooks'
 
 export default function MigrateV1() {
   const theme = useContext(ThemeContext)
   const { account, chainId } = useActiveWeb3React()
+  const pathName = usePathName()
 
   const [tokenSearch, setTokenSearch] = useState<string>('')
   const handleTokenSearchChange = useCallback(e => setTokenSearch(e.target.value), [setTokenSearch])
 
   // automatically add the search token
   const token = useToken(tokenSearch)
-  const selectedTokenListTokens = useSelectedTokenList('uniswap')
+  const selectedTokenListTokens = useCombinedActiveList(pathName)
   const isOnSelectedList = isTokenOnList(selectedTokenListTokens, token ?? undefined)
-  const allTokens = useAllTokens()
+  const allTokens = useAllTokens(pathName)
   const addToken = useAddUserToken()
   useEffect(() => {
     if (token && !isOnSelectedList && !allTokens[token.address]) {

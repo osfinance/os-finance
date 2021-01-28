@@ -7,18 +7,17 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
+import Logo from '../../assets/svg/logo.png'
+import LogoDark from '../../assets/svg/logo_white.png'
 import CompoundIcon from '../../assets/svg/logo_compound.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE, ExternalLink } from '../../theme'
 
 import { YellowCard } from '../Card'
-import Settings from '../Settings'
+import { Moon, Sun } from 'react-feather'
 import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
@@ -30,7 +29,8 @@ import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
 import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
-import usePrevious from '../../hooks/usePrevious'
+import usePrevious from 'hooks/usePrevious'
+import { CountUp } from 'use-count-up'
 import { PageFields } from 'data/Reserves'
 
 const HeaderFrame = styled.div`
@@ -228,7 +228,7 @@ const StyledNavLink = styled(NavLink).attrs({
 
 const StyledExternalLink = styled(ExternalLink).attrs({
   activeClassName
-})<{ isActive?: boolean; smallShow?: boolean }>`
+})<{ isActive?: boolean; smallHide?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
   border-radius: 3rem;
@@ -252,9 +252,38 @@ const StyledExternalLink = styled(ExternalLink).attrs({
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
 
-  ${({ theme, smallShow }) => theme.mediaWidth.upToExtraSmall`
-      display: ${smallShow ? 'block' : 'none'};
+  ${({ theme, smallHide }) => theme.mediaWidth.upToExtraSmall`
+      display: ${smallHide ? 'none' : 'block'};
   `}
+`
+
+export const StyledMenuButton = styled.button`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  height: 35px;
+  background-color: ${({ theme }) => theme.bg3};
+  margin-left: 8px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.5rem;
+
+  :hover,
+  :focus {
+    cursor: pointer;
+    outline: none;
+    background-color: ${({ theme }) => theme.bg4};
+  }
+
+  svg {
+    margin-top: 2px;
+  }
+  > * {
+    stroke: ${({ theme }) => theme.text1};
+  }
 `
 
 const EmojiIcon = styled.div`
@@ -271,18 +300,22 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
 
   const location = useLocation()
   const page = location.pathname.split('/')[1]
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [isDark] = useDarkModeManager()
+  // const [isDark] = useDarkModeManager()
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
+
+  // const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  // const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  // const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
       <HeaderRow>
-        <Title href=".">
+        <Title href={`/#/${page}/`}>
           {PageFields.HOME === page && (
             <UniIcon>
               <EmojiIcon role="img">{'😋'}</EmojiIcon>
@@ -290,7 +323,7 @@ export default function Header() {
           )}
           {PageFields.UNISWAP === page && (
             <UniIcon>
-              <img width={'24px'} src={isDark ? LogoDark : Logo} alt="logo" />
+              <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
             </UniIcon>
           )}
           {PageFields.COMPOUND === page && (
@@ -306,7 +339,7 @@ export default function Header() {
         </Title>
         <HeaderLinks>
           <StyledNavLink id={`swap-nav-link`} to={'/home'}>
-            {t('home')}
+            OS Finance
           </StyledNavLink>
           {PageFields.UNISWAP === page && <UniswapHeaderLinks />}
           {PageFields.SUSHISWAP === page && <SushiswapHeaderLinks />}
@@ -331,7 +364,9 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <Settings />
+          <StyledMenuButton onClick={() => toggleDarkMode()}>
+            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
+          </StyledMenuButton>
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>
@@ -442,21 +477,30 @@ function CompoundHeaderLinks() {
   return (
     <>
       <StyledNavLink
-        id={`lending-nav-link`}
-        to={'/lending'}
-        isActive={(match, { pathname }) => Boolean(match) || pathname.startsWith('/compound/lending')}
+        id={`pool-nav-link`}
+        to={'/pool'}
+        isActive={(match, { pathname }) =>
+          Boolean(match) ||
+          pathname.startsWith('/add') ||
+          pathname.startsWith('/remove') ||
+          pathname.startsWith('/create') ||
+          pathname.startsWith('/find')
+        }
       >
+        {t('flashLoan')}
+      </StyledNavLink>
+      <StyledNavLink id={`lending-nav-link`} to={'/lending'}>
         {t('lending')}
       </StyledNavLink>
-      <StyledExternalLink id={`twitter-nav-link`} href={'https://twitter.com/compoundfinance'}>
-        Twitter <span style={{ fontSize: '11px' }}>↗</span>
+      <StyledNavLink id={`stake-nav-link`} to={'/deer'}>
+        DEER
+      </StyledNavLink>
+      <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
+        Vote
+      </StyledNavLink>
+      <StyledExternalLink id={`stake-nav-link`} href={'https://info.deerfi.com'}>
+        Charts <span style={{ fontSize: '11px' }}>↗</span>
       </StyledExternalLink>
-      <StyledExternalLink id={`discord-nav-link`} href={'https://compound.finance/discord'}>
-        Discord <span style={{ fontSize: '11px' }}>↗</span>
-      </StyledExternalLink>
-      {/* <StyledExternalLink id={`discord-nav-link`} href={'https://defipulse.com/defi-list'}>
-        DeFi Pulse <span style={{ fontSize: '11px' }}>↗</span>
-      </StyledExternalLink> */}
     </>
   )
 }

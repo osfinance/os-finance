@@ -3,15 +3,14 @@ import TransactionSettings from 'components/TransactionSettings'
 import React, { useContext, useRef, useState } from 'react'
 import { Settings, X } from 'react-feather'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleSettingsMenu } from '../../state/application/hooks'
 import {
-  useDarkModeManager,
   useExpertModeManager,
+  useUserSingleHopOnly,
   useUserSlippageTolerance,
   useUserTransactionTTL
 } from '../../state/user/hooks'
@@ -27,7 +26,11 @@ const StyledMenuIcon = styled(Settings)`
   width: 20px;
 
   > * {
-    stroke: ${({ theme }) => theme.text1};
+    stroke: ${({ theme }) => theme.text2};
+  }
+
+  :hover {
+    opacity: 0.7;
   }
 `
 
@@ -52,7 +55,6 @@ const StyledMenuButton = styled.button`
   margin: 0;
   padding: 0;
   height: 35px;
-  background-color: ${({ theme }) => theme.bg3};
 
   padding: 0.15rem 0.5rem;
   border-radius: 0.5rem;
@@ -61,7 +63,6 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => theme.bg4};
   }
 
   svg {
@@ -95,18 +96,12 @@ const MenuFlyout = styled.span`
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  top: 4rem;
+  top: 3rem;
   right: 0rem;
   z-index: 100;
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    min-width: 18.125rem;
-    right: -46px;
-  `};
-
   ${({ theme }) => theme.mediaWidth.upToMedium`
     min-width: 18.125rem;
-    top: -22rem;
   `};
 `
 
@@ -131,10 +126,6 @@ export default function SettingsTab() {
   const open = useModalOpen(ApplicationModal.SETTINGS)
   const toggle = useToggleSettingsMenu()
 
-  const location = useLocation()
-  const page = location.pathname.split('/')[1]
-  const showTransactionSetting = page === 'uniswap' || page === 'sushiswap' ? true : false
-
   const theme = useContext(ThemeContext)
   const [userSlippageTolerance, setUserslippageTolerance] = useUserSlippageTolerance()
 
@@ -142,7 +133,7 @@ export default function SettingsTab() {
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
 
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  const [singleHopOnly, setSingleHopOnly] = useUserSingleHopOnly()
 
   // show confirmation view before turning on
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -201,52 +192,53 @@ export default function SettingsTab() {
       {open && (
         <MenuFlyout>
           <AutoColumn gap="md" style={{ padding: '1rem' }}>
-            {showTransactionSetting ? (
-              <>
-                <Text fontWeight={600} fontSize={14}>
-                  {t('transactionSettings')}
-                </Text>
-                <TransactionSettings
-                  rawSlippage={userSlippageTolerance}
-                  setRawSlippage={setUserslippageTolerance}
-                  deadline={ttl}
-                  setDeadline={setTtl}
-                />
-                <Text fontWeight={600} fontSize={14}>
-                  {t('interfaceSettings')}
-                </Text>
-                <RowBetween>
-                  <RowFixed>
-                    <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                      {t('toggleExpertMode')}
-                    </TYPE.black>
-                    <QuestionHelper text={t('expertModeQuestionHelper')} />
-                  </RowFixed>
-                  <Toggle
-                    id="toggle-expert-mode-button"
-                    isActive={expertMode}
-                    toggle={
-                      expertMode
-                        ? () => {
-                            toggleExpertMode()
-                            setShowConfirmation(false)
-                          }
-                        : () => {
-                            toggle()
-                            setShowConfirmation(true)
-                          }
-                    }
-                  />
-                </RowBetween>
-              </>
-            ) : null}
+            <Text fontWeight={600} fontSize={14}>
+              {t('transactionSettings')}
+            </Text>
+            <TransactionSettings
+              rawSlippage={userSlippageTolerance}
+              setRawSlippage={setUserslippageTolerance}
+              deadline={ttl}
+              setDeadline={setTtl}
+            />
+            <Text fontWeight={600} fontSize={14}>
+              {t('interfaceSettings')}
+            </Text>
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  {t('toggleDarkMode')}
+                  {t('toggleExpertMode')}
                 </TYPE.black>
+                <QuestionHelper text={t('expertModeQuestionHelper')} />
               </RowFixed>
-              <Toggle isActive={darkMode} toggle={toggleDarkMode} />
+              <Toggle
+                id="toggle-expert-mode-button"
+                isActive={expertMode}
+                toggle={
+                  expertMode
+                    ? () => {
+                        toggleExpertMode()
+                        setShowConfirmation(false)
+                      }
+                    : () => {
+                        toggle()
+                        setShowConfirmation(true)
+                      }
+                }
+              />
+            </RowBetween>
+            <RowBetween>
+              <RowFixed>
+                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+                  {t('disableMultihops')}
+                </TYPE.black>
+                <QuestionHelper text={t('restrictSwapPairs')} />
+              </RowFixed>
+              <Toggle
+                id="toggle-disable-multihop-button"
+                isActive={singleHopOnly}
+                toggle={() => (singleHopOnly ? setSingleHopOnly(false) : setSingleHopOnly(true))}
+              />
             </RowBetween>
           </AutoColumn>
         </MenuFlyout>

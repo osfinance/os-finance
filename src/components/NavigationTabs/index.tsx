@@ -6,7 +6,12 @@ import { NavLink, Link as HistoryLink, useLocation } from 'react-router-dom'
 
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
-import QuestionHelper from '../QuestionHelper'
+// import QuestionHelper from '../QuestionHelper'
+import Settings from '../Settings/FlashLoanSettings'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
+import { resetMintState } from 'state/mint/actions'
+import { usePathName } from 'state/lists/hooks'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -67,36 +72,38 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
 }
 
 export function FindPoolTabs() {
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem' }}>
+      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
         <HistoryLink to={`/${pathName}/pool`}>
           <StyledArrowLeft />
         </HistoryLink>
         <ActiveText>Import Pool</ActiveText>
-        <QuestionHelper text={"Use this tool to find pairs that don't automatically appear in the interface."} />
+        <Settings />
       </RowBetween>
     </Tabs>
   )
 }
 
 export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating: boolean }) {
-  const pathName: string = useLocation().pathname.split('/')[1]
+  // reset states on back
+  const dispatch = useDispatch<AppDispatch>()
+  const pathName = usePathName()
+
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem' }}>
-        <HistoryLink to={`/${pathName}/pool`}>
+      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
+        <HistoryLink
+          to={`/${pathName}/pool`}
+          onClick={() => {
+            adding && dispatch(resetMintState())
+          }}
+        >
           <StyledArrowLeft />
         </HistoryLink>
         <ActiveText>{creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}</ActiveText>
-        <QuestionHelper
-          text={
-            adding
-              ? 'When you add liquidity, you are given pool tokens representing your position. These tokens automatically earn fees proportional to your share of the pool, and can be redeemed at any time.'
-              : 'Removing pool tokens converts your position back into underlying tokens at the current rate, proportional to your share of the pool. Accrued fees are included in the amounts you receive.'
-          }
-        />
+        <Settings />
       </RowBetween>
     </Tabs>
   )

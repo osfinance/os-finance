@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, ETHER, JSBI, Pair, Percent, Price, TokenAmount } from '@uniswap/sdk'
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
+import { usePathName } from 'state/lists/hooks'
 import { PairState, usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
 
@@ -16,6 +16,33 @@ const ZERO = JSBI.BigInt(0)
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint)
+}
+
+export function useMintActionHandlers(
+  noLiquidity: boolean | undefined
+): {
+  onFieldAInput: (typedValue: string) => void
+  onFieldBInput: (typedValue: string) => void
+} {
+  const dispatch = useDispatch<AppDispatch>()
+
+  const onFieldAInput = useCallback(
+    (typedValue: string) => {
+      dispatch(typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true }))
+    },
+    [dispatch, noLiquidity]
+  )
+  const onFieldBInput = useCallback(
+    (typedValue: string) => {
+      dispatch(typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true }))
+    },
+    [dispatch, noLiquidity]
+  )
+
+  return {
+    onFieldAInput,
+    onFieldBInput
+  }
 }
 
 export function useDerivedMintInfo(
@@ -49,10 +76,10 @@ export function useDerivedMintInfo(
     [currencyA, currencyB]
   )
 
-  const pathname: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
 
   // pair
-  const [pairState, pair] = usePair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], pathname)
+  const [pairState, pair] = usePair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B], pathName)
   const totalSupply = useTotalSupply(pair?.liquidityToken)
 
   const noLiquidity: boolean =
@@ -168,32 +195,5 @@ export function useDerivedMintInfo(
     liquidityMinted,
     poolTokenPercentage,
     error
-  }
-}
-
-export function useMintActionHandlers(
-  noLiquidity: boolean | undefined
-): {
-  onFieldAInput: (typedValue: string) => void
-  onFieldBInput: (typedValue: string) => void
-} {
-  const dispatch = useDispatch<AppDispatch>()
-
-  const onFieldAInput = useCallback(
-    (typedValue: string) => {
-      dispatch(typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true }))
-    },
-    [dispatch, noLiquidity]
-  )
-  const onFieldBInput = useCallback(
-    (typedValue: string) => {
-      dispatch(typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true }))
-    },
-    [dispatch, noLiquidity]
-  )
-
-  return {
-    onFieldAInput,
-    onFieldBInput
   }
 }

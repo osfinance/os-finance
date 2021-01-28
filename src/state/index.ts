@@ -7,8 +7,10 @@ import user from './user/reducer'
 import transactions from './transactions/reducer'
 import swap from './swap/reducer'
 import mint from './mint/reducer'
+import flashLoanMint from './flashLoanMint/reducer'
 import lists from './lists/reducer'
 import burn from './burn/reducer'
+import flashLoanBurn from './flashLoanBurn/reducer'
 import multicall from './multicall/reducer'
 import lending from './lending/reducer'
 
@@ -21,7 +23,9 @@ const store = configureStore({
     transactions,
     swap,
     mint,
+    flashLoanMint,
     burn,
+    flashLoanBurn,
     multicall,
     lists,
     lending

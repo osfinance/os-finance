@@ -6,6 +6,7 @@
   "installMetamask": "请从安装了 Metamask 插件的 Chrome 或 Brave 访问。",
   "disconnected": "未连接",
   "lending": "借贷",
+  "flashLoan": "闪电贷",
   "swap": "兑换",
   "home": "首页",
   "send": "发送",
@@ -170,5 +171,7 @@
   "expertModeUsageNotice": "请确保在自己清楚每个步骤的情况下使用此模式",
   "confirm": "确认",
   "confirmExpertMode": "请输入 \"确认\" 来开启专业模式。",
-  "turnOnExpertMode": "开启专业模式"
+  "turnOnExpertMode": "开启专业模式",
+  "disableMultihops": "禁用交易多跳",
+  "restrictSwapPairs": "将交易限制为仅当前直接交易的路径"
 }

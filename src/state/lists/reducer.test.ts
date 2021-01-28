@@ -1,7 +1,8 @@
+import { DEFAULT_ACTIVE_LIST_URLS } from './../../constants/lists'
 import { createStore, Store } from 'redux'
-import { DEFAULT_LIST_OF_LISTS, DEFAULT_TOKEN_LIST_URL } from '../../constants/lists'
+import { DEFAULT_LIST_OF_LISTS } from '../../constants/lists'
 import { updateVersion } from '../global/actions'
-import { fetchTokenList, acceptListUpdate, addList, removeList, selectList } from './actions'
+import { fetchTokenList, acceptListUpdate, addList, removeList, enableList } from './actions'
 import reducer, { ListsState } from './reducer'
 
 const STUB_TOKEN_LIST = {
@@ -30,7 +31,7 @@ describe('list reducer', () => {
   beforeEach(() => {
     store = createStore(reducer, {
       byOsUrl: { uniswap: {}, sushiswap: {} },
-      selectedOsListUrl: undefined
+      activeOsListUrls: undefined
     })
   })
 
@@ -66,10 +67,10 @@ describe('list reducer', () => {
               }
             }
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
 
-        store.dispatch(fetchTokenList.pending({ requestId: 'request-id', url: 'fake-url', pathName: 'uniswap' }))
+        store.dispatch(fetchTokenList.pending({ requestId: 'request-id', pathName: 'uniswap', url: 'fake-url' }))
         expect(store.getState()).toEqual({
           byOsUrl: {
             uniswap: {
@@ -81,7 +82,7 @@ describe('list reducer', () => {
               }
             }
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
     })
@@ -92,8 +93,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -108,7 +109,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
 
@@ -117,16 +118,16 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         store.dispatch(
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -141,7 +142,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
 
@@ -150,8 +151,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
 
@@ -159,8 +160,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: PATCHED_STUB_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -175,7 +176,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
       it('does not save to current if list is newer minor version', () => {
@@ -183,8 +184,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
 
@@ -192,8 +193,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: MINOR_UPDATED_STUB_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -208,7 +209,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
       it('does not save to pending if list is newer major version', () => {
@@ -216,8 +217,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: STUB_TOKEN_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
 
@@ -225,8 +226,8 @@ describe('list reducer', () => {
           fetchTokenList.fulfilled({
             tokenList: MAJOR_UPDATED_STUB_LIST,
             requestId: 'request-id',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -241,7 +242,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
     })
@@ -252,13 +253,13 @@ describe('list reducer', () => {
           fetchTokenList.rejected({
             requestId: 'request-id',
             errorMessage: 'abcd',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
           byOsUrl: { uniswap: {}, sushiswap: {} },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
 
@@ -272,16 +273,17 @@ describe('list reducer', () => {
                 loadingRequestId: 'request-id',
                 pendingUpdate: null
               }
-            }
+            },
+            sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
         store.dispatch(
           fetchTokenList.rejected({
             requestId: 'request-id',
             errorMessage: 'abcd',
-            url: 'fake-url',
-            pathName: 'uniswap'
+            pathName: 'uniswap',
+            url: 'fake-url'
           })
         )
         expect(store.getState()).toEqual({
@@ -293,9 +295,10 @@ describe('list reducer', () => {
                 loadingRequestId: null,
                 pendingUpdate: null
               }
-            }
+            },
+            sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
       })
     })
@@ -316,7 +319,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
     })
     it('no op for existing list', () => {
@@ -332,7 +335,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
       store.dispatch(addList({ url: 'fake-url', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
@@ -347,7 +350,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
     })
   })
@@ -366,7 +369,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
       store.dispatch(acceptListUpdate({ url: 'fake-url', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
@@ -381,7 +384,7 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
     })
   })
@@ -400,15 +403,15 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
       store.dispatch(removeList({ url: 'fake-url', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
         byOsUrl: { uniswap: {}, sushiswap: {} },
-        selectedOsListUrl: undefined
+        activeOsListUrls: undefined
       })
     })
-    it('selects the default list if removed list was selected', () => {
+    it('Removes from active lists if active list is removed', () => {
       store = createStore(reducer, {
         byOsUrl: {
           uniswap: {
@@ -421,18 +424,18 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: { uniswap: 'fake-url', sushiswap: '' }
+        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [] }
       })
       store.dispatch(removeList({ url: 'fake-url', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
         byOsUrl: { uniswap: {}, sushiswap: {} },
-        selectedOsListUrl: { uniswap: 'tokens.uniswap.eth', sushiswap: '' }
+        activeOsListUrls: { uniswap: [], sushiswap: [] }
       })
     })
   })
 
-  describe('selectList', () => {
-    it('sets the selected list url', () => {
+  describe('enableList', () => {
+    it('enables a list url', () => {
       store = createStore(reducer, {
         byOsUrl: {
           uniswap: {
@@ -445,9 +448,9 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: { uniswap: '', sushiswap: '' }
+        activeOsListUrls: undefined
       })
-      store.dispatch(selectList({ url: 'fake-url', pathName: 'uniswap' }))
+      store.dispatch(enableList({ url: 'fake-url', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
         byOsUrl: {
           uniswap: {
@@ -460,10 +463,10 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: { uniswap: 'fake-url', sushiswap: '' }
+        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
       })
     })
-    it('selects if not present already', () => {
+    it('adds to url keys if not present already on enable', () => {
       store = createStore(reducer, {
         byOsUrl: {
           uniswap: {
@@ -476,9 +479,9 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: { uniswap: '', sushiswap: '' }
+        activeOsListUrls: undefined
       })
-      store.dispatch(selectList({ url: 'fake-url-invalid', pathName: 'uniswap' }))
+      store.dispatch(enableList({ url: 'fake-url-invalid', pathName: 'uniswap' }))
       expect(store.getState()).toEqual({
         byOsUrl: {
           uniswap: {
@@ -497,7 +500,38 @@ describe('list reducer', () => {
           },
           sushiswap: {}
         },
-        selectedOsListUrl: { uniswap: 'fake-url-invalid', sushiswap: '' }
+        activeOsListUrls: { uniswap: ['fake-url-invalid'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
+      })
+    })
+    it('enable works if list already added', () => {
+      store = createStore(reducer, {
+        byOsUrl: {
+          uniswap: {
+            'fake-url': {
+              error: null,
+              current: null,
+              loadingRequestId: null,
+              pendingUpdate: null
+            }
+          },
+          sushiswap: {}
+        },
+        activeOsListUrls: undefined
+      })
+      store.dispatch(enableList({ url: 'fake-url', pathName: 'uniswap' }))
+      expect(store.getState()).toEqual({
+        byOsUrl: {
+          uniswap: {
+            'fake-url': {
+              error: null,
+              current: null,
+              loadingRequestId: null,
+              pendingUpdate: null
+            }
+          },
+          sushiswap: {}
+        },
+        activeOsListUrls: { uniswap: ['fake-url'], sushiswap: [...DEFAULT_ACTIVE_LIST_URLS['sushiswap']] }
       })
     })
   })
@@ -520,22 +554,21 @@ describe('list reducer', () => {
                 loadingRequestId: null,
                 pendingUpdate: null
               }
-            }
+            },
+            sushiswap: {}
           },
-          selectedOsListUrl: undefined
+          activeOsListUrls: undefined
         })
         store.dispatch(updateVersion())
       })
 
       it('clears the current lists', () => {
         expect(
-          store.getState().byOsUrl['uniswap'][
+          store.getState().byOsUrl[
             'https://unpkg.com/@uniswap/default-token-list@latest/uniswap-default.tokenlist.json'
           ]
         ).toBeUndefined()
-        expect(
-          store.getState().byOsUrl['uniswap']['https://unpkg.com/@uniswap/default-token-list@latest']
-        ).toBeUndefined()
+        expect(store.getState().byOsUrl['https://unpkg.com/@uniswap/default-token-list@latest']).toBeUndefined()
       })
 
       it('puts in all the new lists', () => {
@@ -544,7 +577,7 @@ describe('list reducer', () => {
       it('all lists are empty', () => {
         const s = store.getState()
         Object.keys(s.byOsUrl['uniswap']).forEach(url => {
-          if (url === DEFAULT_TOKEN_LIST_URL['uniswap']) {
+          if (url === DEFAULT_ACTIVE_LIST_URLS['uniswap'][0]) {
             expect(s.byOsUrl['uniswap'][url]).toEqual({
               error: null,
               current: null,
@@ -565,15 +598,7 @@ describe('list reducer', () => {
         expect(store.getState().lastInitializedDefaultOsListOfLists).toEqual(DEFAULT_LIST_OF_LISTS)
       })
       it('sets selected list', () => {
-        expect(store.getState().selectedOsListUrl?.uniswap).toEqual(DEFAULT_TOKEN_LIST_URL.uniswap)
-      })
-      it('default list is initialized', () => {
-        expect(store.getState().byOsUrl['uniswap'][DEFAULT_TOKEN_LIST_URL['uniswap']]).toEqual({
-          error: null,
-          current: null,
-          loadingRequestId: null,
-          pendingUpdate: null
-        })
+        expect(store.getState().activeOsListUrls).toEqual(DEFAULT_ACTIVE_LIST_URLS)
       })
     })
     describe('initialized with a different set of lists', () => {
@@ -596,7 +621,7 @@ describe('list reducer', () => {
             },
             sushiswap: {}
           },
-          selectedOsListUrl: undefined,
+          activeOsListUrls: undefined,
           lastInitializedDefaultOsListOfLists: {
             uniswap: ['https://unpkg.com/@uniswap/default-token-list@latest'],
             sushiswap: []
@@ -624,16 +649,16 @@ describe('list reducer', () => {
       })
 
       it('adds all the lists in the default list of lists', () => {
-        expect(Object.keys(store.getState().byOsUrl.uniswap)).toContain(DEFAULT_TOKEN_LIST_URL.uniswap)
+        expect(Object.keys(store.getState().byOsUrl.uniswap)).toContain(DEFAULT_ACTIVE_LIST_URLS.uniswap[0])
       })
 
       it('each of those initialized lists is empty', () => {
-        const byOsUrl = store.getState().byOsUrl
+        const byOsUrl = store.getState().byOsUrl.uniswap
         // note we don't expect the uniswap default list to be prepopulated
         // this is ok.
-        Object.keys(byOsUrl['uniswap']).forEach(url => {
+        Object.keys(byOsUrl).forEach(url => {
           if (url !== 'https://unpkg.com/@uniswap/default-token-list@latest/uniswap-default.tokenlist.json') {
-            expect(byOsUrl['uniswap'][url]).toEqual({
+            expect(byOsUrl[url]).toEqual({
               error: null,
               current: null,
               loadingRequestId: null,
@@ -647,10 +672,10 @@ describe('list reducer', () => {
         expect(store.getState().lastInitializedDefaultOsListOfLists).toEqual(DEFAULT_LIST_OF_LISTS)
       })
       it('sets default list to selected list', () => {
-        expect(store.getState().selectedOsListUrl).toEqual(DEFAULT_TOKEN_LIST_URL)
+        expect(store.getState().activeOsListUrls).toEqual(DEFAULT_ACTIVE_LIST_URLS)
       })
       it('default list is initialized', () => {
-        expect(store.getState().byOsUrl['uniswap'][DEFAULT_TOKEN_LIST_URL['uniswap']]).toEqual({
+        expect(store.getState().byOsUrl['uniswap'][DEFAULT_ACTIVE_LIST_URLS['uniswap'][0]]).toEqual({
           error: null,
           current: null,
           loadingRequestId: null,

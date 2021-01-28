@@ -6,11 +6,23 @@ import AddressClaimModal from '../components/claim/AddressClaimModal'
 import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
 import URLWarning from '../components/Header/URLWarning'
-import Popups from '../components/Popups'
+// import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
+import AddFlashLoanLiquidity from './AddFlashLoanLiquidity'
+import {
+  RedirectFlashLoanAddLiquidity,
+  RedirectToAddLiquidity as FlashLoanRedirectToAddLiquidity
+} from './AddFlashLoanLiquidity/redirects'
+import DeerEarn from './DeerEarn'
+import DeerManage from './DeerEarn/Manage'
+import FlashLoanPool from './FlashLoanPool'
+import FlashLoanPoolFinder from './FlashLoanPoolFinder'
+import RemoveFlashLoanLiquidity from './RemoveFlashLoanLiquidity'
+import DeerVote from './DeerVote'
+import { RedirectPathToPoolOnly } from './FlashLoanPool/redirects'
 import AddLiquidity from './AddLiquidity'
 import {
   RedirectDuplicateTokenIds,
@@ -95,7 +107,7 @@ export default function App() {
           <Header />
         </HeaderWrapper>
         <BodyWrapper>
-          <Popups />
+          {/* <Popups /> */}
           <Polling />
           <TopLevelModals />
           <Web3ReactManager>
@@ -103,7 +115,19 @@ export default function App() {
               <Route exact strict path="/home" component={Home} />
               <Route path="/compound">
                 <Route exact strict path="/compound/lending" component={Lend} />
-                <Route component={RedirectPathToCompoundOnly} />
+                <Route exact strict path="/compound/find" component={FlashLoanPoolFinder} />
+                <Route exact strict path="/compound/pool" component={FlashLoanPool} />
+                <Route exact strict path="/compound/deer" component={DeerEarn} />
+                <Route exact strict path="/compound/vote" component={DeerVote} />
+                <Route exact strict path="/compound/create" component={FlashLoanRedirectToAddLiquidity} />
+                <Route exact path="/compound/add" component={AddFlashLoanLiquidity} />
+                <Route exact path="/compound/add/:currencyId" component={RedirectFlashLoanAddLiquidity} />
+                <Route exact path="/compound/create" component={AddFlashLoanLiquidity} />
+                <Route exact path="/compound/create/:currencyId" component={RedirectFlashLoanAddLiquidity} />
+                <Route exact strict path="/compound/remove/:currencyId" component={RemoveFlashLoanLiquidity} />
+                <Route exact strict path="/compound/deer/:currencyId" component={DeerManage} />
+                <Route exact strict path="/compound/vote/:id" component={VotePage} />
+                <Route component={RedirectPathToPoolOnly} />
               </Route>
               <Route path="/sushiswap">
                 <Route exact strict path="/sushiswap/swap" component={Swap} />

@@ -1,6 +1,6 @@
 import { Currency, Pair } from '@uniswap/sdk'
-import React, { useState, useContext, useCallback } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React, { useState, useCallback } from 'react'
+import styled from 'styled-components'
 import { darken } from 'polished'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
@@ -13,6 +13,8 @@ import { ReactComponent as DropDown } from '../../assets/images/dropdown.svg'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useTranslation } from 'react-i18next'
+import useTheme from '../../hooks/useTheme'
+import { Pool } from 'data/Pool'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -125,6 +127,7 @@ interface CurrencyInputPanelProps {
   disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | null
+  pool?: Pool | null
   hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
@@ -143,6 +146,7 @@ export default function CurrencyInputPanel({
   disableCurrencySelect = false,
   hideBalance = false,
   pair = null, // used for double token logo
+  pool = null, // used for pool token logo
   hideInput = false,
   otherCurrency,
   id,
@@ -154,7 +158,7 @@ export default function CurrencyInputPanel({
   const [modalOpen, setModalOpen] = useState(false)
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-  const theme = useContext(ThemeContext)
+  const theme = useTheme()
 
   const handleDismissSearch = useCallback(() => {
     setModalOpen(false)
@@ -212,6 +216,8 @@ export default function CurrencyInputPanel({
             <Aligner>
               {pair ? (
                 <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+              ) : pool ? (
+                <CurrencyLogo currency={pool.token} size={'24px'} />
               ) : currency ? (
                 <CurrencyLogo currency={currency} size={'24px'} />
               ) : null}
@@ -219,6 +225,8 @@ export default function CurrencyInputPanel({
                 <StyledTokenName className="pair-name-container">
                   {pair?.token0.symbol}:{pair?.token1.symbol}
                 </StyledTokenName>
+              ) : pool ? (
+                <StyledTokenName className="pair-name-container">FL-{pool?.token.symbol}</StyledTokenName>
               ) : (
                 <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
                   {(currency && currency.symbol && currency.symbol.length > 20

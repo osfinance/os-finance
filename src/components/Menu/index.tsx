@@ -1,6 +1,6 @@
 import { PageFields } from 'data/Reserves'
 import React, { useRef } from 'react'
-import { Code } from 'react-feather'
+import { Code, MessageCircle, PieChart } from 'react-feather'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
@@ -123,16 +123,22 @@ export default function Menu() {
             <Code size={14} />
             Code
           </MenuItem>
-          {/*
-          <MenuItem id="link" href="https://discord.gg/EwFs3Pp">
+          <MenuItem id="link" href="https://twitter.com/deerfi_com">
+            <MessageCircle size={14} />
+            Twitter
+          </MenuItem>
+          <MenuItem id="link" href="https://discord.gg/SHdfFgX">
             <MessageCircle size={14} />
             Discord
+          </MenuItem>
+          <MenuItem id="link" href="https://t.me/deerfi">
+            <MessageCircle size={14} />
+            Telegram
           </MenuItem>
           <MenuItem id="link" href="https://uniswap.info/">
             <PieChart size={14} />
             Analytics
           </MenuItem>
-           */}
           {account && PageFields.UNISWAP === page && (
             <ButtonPrimary onClick={openClaimModal} padding="8px 16px" width="100%" borderRadius="12px" mt="0.5rem">
               Claim UNI

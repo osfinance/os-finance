@@ -1,8 +1,10 @@
 import { TokenAmount, Pair, Currency, Token } from '@uniswap/sdk'
+import { Pool } from './Pool'
 import { pack, keccak256 } from '@ethersproject/solidity'
 import { getCreate2Address } from '@ethersproject/address'
 import { useMemo } from 'react'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as IFlashLoanV1PoolABI } from '../constants/flashLoan/IFlashLoanV1Pool.json'
 import { Interface } from '@ethersproject/abi'
 import { useActiveWeb3React } from '../hooks'
 
@@ -11,6 +13,7 @@ import { wrappedCurrency } from '../utils/wrappedCurrency'
 import { SUSHISWAP_FACTORY_ADDRESS, SUSHISWAP_INIT_CODE_HASH } from '../constants'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairABI)
+const POOL_INTERFACE = new Interface(IFlashLoanV1PoolABI)
 let PAIR_ADDRESS_CACHE: { [token0Address: string]: { [token1Address: string]: string } } = {}
 
 export enum PairState {
@@ -120,4 +123,36 @@ export function usePairs(
 
 export function usePair(tokenA?: Currency, tokenB?: Currency, router?: string): [PairState, Pair | null] {
   return usePairs([[tokenA, tokenB]], router)[0]
+}
+
+export function usePools(currencies: (Currency | undefined)[]): [PairState, Pool | null][] {
+  const { chainId } = useActiveWeb3React()
+
+  const tokens = useMemo(() => currencies.map(currency => wrappedCurrency(currency, chainId)), [chainId, currencies])
+
+  const poolAddresses = useMemo(
+    () =>
+      tokens.map(token => {
+        return token ? Pool.getAddress(token) : undefined
+      }),
+    [tokens]
+  )
+
+  const results = useMultipleContractSingleData(poolAddresses, POOL_INTERFACE, 'reserve')
+
+  return useMemo(() => {
+    return results.map((result, i) => {
+      const { result: reserve, loading } = result
+      const token = tokens[i]
+
+      if (loading) return [PairState.LOADING, null]
+      if (!token) return [PairState.INVALID, null]
+      if (!reserve) return [PairState.NOT_EXISTS, null]
+      return [PairState.EXISTS, new Pool(new TokenAmount(token, reserve.toString()))]
+    })
+  }, [results, tokens])
+}
+
+export function usePool(token?: Currency): [PairState, Pool | null] {
+  return usePools([token])[0]
 }

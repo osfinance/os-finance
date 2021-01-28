@@ -38,6 +38,9 @@ import { Dots, Wrapper } from '../Pool/styleds'
 import { ConfirmAddModalBottom } from './ConfirmAddModalBottom'
 import { currencyId } from '../../utils/currencyId'
 import { PoolPriceBar } from './PoolPriceBar'
+import { useIsTransactionUnsupported } from 'hooks/Trades'
+import UnsupportedCurrencyFooter from 'components/swap/UnsupportedCurrencyFooter'
+import { usePathName } from 'state/lists/hooks'
 
 export default function AddLiquidity({
   match: {
@@ -77,6 +80,7 @@ export default function AddLiquidity({
     poolTokenPercentage,
     error
   } = useDerivedMintInfo(currencyA ?? undefined, currencyB ?? undefined)
+
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity)
 
   const isValid = !error
@@ -273,7 +277,7 @@ export default function AddLiquidity({
     currencies[Field.CURRENCY_A]?.symbol
   } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} ${currencies[Field.CURRENCY_B]?.symbol}`
 
-  const pathName: string = useLocation().pathname.split('/')[1]
+  const pathName = usePathName()
 
   const handleCurrencyASelect = useCallback(
     (currencyA: Currency) => {
@@ -313,6 +317,8 @@ export default function AddLiquidity({
 
   const isCreate = history.location.pathname.includes('/create')
 
+  const addIsUnsupported = useIsTransactionUnsupported(currencies?.CURRENCY_A, currencies?.CURRENCY_B)
+
   return (
     <>
       <AppBody>
@@ -335,7 +341,7 @@ export default function AddLiquidity({
           />
           <AutoColumn gap="20px">
             {noLiquidity ||
-              (isCreate && (
+              (isCreate ? (
                 <ColumnCenter>
                   <BlueCard>
                     <AutoColumn gap="10px">
@@ -347,6 +353,18 @@ export default function AddLiquidity({
                       </TYPE.link>
                       <TYPE.link fontWeight={400} color={'primaryText1'}>
                         Once you are happy with the rate click supply to review.
+                      </TYPE.link>
+                    </AutoColumn>
+                  </BlueCard>
+                </ColumnCenter>
+              ) : (
+                <ColumnCenter>
+                  <BlueCard>
+                    <AutoColumn gap="10px">
+                      <TYPE.link fontWeight={400} color={'primaryText1'}>
+                        <b>Tip:</b> When you add liquidity, you will receive pool tokens representing your position.
+                        These tokens automatically earn fees proportional to your share of the pool, and can be redeemed
+                        at any time.
                       </TYPE.link>
                     </AutoColumn>
                   </BlueCard>
@@ -399,7 +417,11 @@ export default function AddLiquidity({
               </>
             )}
 
-            {!account ? (
+            {addIsUnsupported ? (
+              <ButtonPrimary disabled={true}>
+                <TYPE.main mb="4px">Unsupported Asset</TYPE.main>
+              </ButtonPrimary>
+            ) : !account ? (
               <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
             ) : (
               <AutoColumn gap={'md'}>
@@ -453,12 +475,18 @@ export default function AddLiquidity({
           </AutoColumn>
         </Wrapper>
       </AppBody>
-
-      {pair && !noLiquidity && pairState !== PairState.INVALID ? (
-        <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
-          <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
-        </AutoColumn>
-      ) : null}
+      {!addIsUnsupported ? (
+        pair && !noLiquidity && pairState !== PairState.INVALID ? (
+          <AutoColumn style={{ minWidth: '20rem', width: '100%', maxWidth: '400px', marginTop: '1rem' }}>
+            <MinimalPositionCard showUnwrapped={oneCurrencyIsWETH} pair={pair} />
+          </AutoColumn>
+        ) : null
+      ) : (
+        <UnsupportedCurrencyFooter
+          show={addIsUnsupported}
+          currencies={[currencies.CURRENCY_A, currencies.CURRENCY_B]}
+        />
+      )}
     </>
   )
 }

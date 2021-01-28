@@ -1,9 +1,10 @@
+import { DEFAULT_ACTIVE_LIST_URLS } from './../../constants/lists'
 import { createReducer } from '@reduxjs/toolkit'
 import { getVersionUpgrade, VersionUpgrade } from '@uniswap/token-lists'
 import { TokenList } from '@uniswap/token-lists/dist/types'
-import { DEFAULT_LIST_OF_LISTS, DEFAULT_TOKEN_LIST_URL } from '../../constants/lists'
+import { DEFAULT_LIST_OF_LISTS } from '../../constants/lists'
 import { updateVersion } from '../global/actions'
-import { acceptListUpdate, addList, fetchTokenList, PathNameType, removeList, selectList } from './actions'
+import { acceptListUpdate, addList, fetchTokenList, removeList, enableList, disableList, PathNameType } from './actions'
 
 export interface ListsState {
   readonly byOsUrl: {
@@ -19,10 +20,12 @@ export interface ListsState {
 
   // this contains the default list of lists from the last time the updateVersion was called, i.e. the app was reloaded
   readonly lastInitializedDefaultOsListOfLists?: { uniswap: string[]; sushiswap: string[] }
-  readonly selectedOsListUrl: { uniswap: string; sushiswap: string } | undefined
+
+  // currently active lists
+  readonly activeOsListUrls: { uniswap: string[]; sushiswap: string[] } | undefined
 }
 
-type ListState = ListsState['byOsUrl'][string][string] // ['byOsUrl'][pathName][url]
+type ListState = ListsState['byOsUrl'][string][string]
 
 const NEW_LIST_STATE: ListState = {
   error: null,
@@ -49,7 +52,7 @@ const initialState: ListsState = {
       }, {})
     }
   },
-  selectedOsListUrl: DEFAULT_TOKEN_LIST_URL
+  activeOsListUrls: DEFAULT_ACTIVE_LIST_URLS
 }
 
 export default createReducer(initialState, builder =>
@@ -70,6 +73,7 @@ export default createReducer(initialState, builder =>
       // no-op if update does nothing
       if (current) {
         const upgradeType = getVersionUpgrade(current.version, tokenList.version)
+
         if (upgradeType === VersionUpgrade.NONE) return
         if (loadingRequestId === null || loadingRequestId === requestId) {
           state.byOsUrl[pathName][url] = {
@@ -81,6 +85,11 @@ export default createReducer(initialState, builder =>
           }
         }
       } else {
+        // activate if on default active
+        if (DEFAULT_ACTIVE_LIST_URLS[pathName].includes(url)) {
+          state.activeOsListUrls?.[pathName]?.push(url)
+        }
+
         state.byOsUrl[pathName][url] = {
           ...state.byOsUrl[pathName][url],
           loadingRequestId: null,
@@ -90,7 +99,7 @@ export default createReducer(initialState, builder =>
         }
       }
     })
-    .addCase(fetchTokenList.rejected, (state, { payload: { url, requestId, pathName, errorMessage } }) => {
+    .addCase(fetchTokenList.rejected, (state, { payload: { url, pathName, requestId, errorMessage } }) => {
       if (state.byOsUrl[pathName][url]?.loadingRequestId !== requestId) {
         // no-op since it's not the latest request
         return
@@ -104,46 +113,49 @@ export default createReducer(initialState, builder =>
         pendingUpdate: null
       }
     })
-    .addCase(selectList, (state, { payload: { pathName, url } }) => {
-      if (state.selectedOsListUrl) {
-        state.selectedOsListUrl[pathName] = url
-      } else {
-        if (pathName === 'uniswap') {
-          state.selectedOsListUrl = {
-            uniswap: url,
-            sushiswap: DEFAULT_TOKEN_LIST_URL.sushiswap
-          }
-        } else {
-          state.selectedOsListUrl = {
-            uniswap: DEFAULT_TOKEN_LIST_URL.uniswap,
-            sushiswap: url
-          }
-        }
-      }
-
-      // state.selectedListUrl?.uniswap = url
-      // automatically adds list
+    .addCase(addList, (state, { payload: { url, pathName } }) => {
       if (!state.byOsUrl[pathName][url]) {
         state.byOsUrl[pathName][url] = NEW_LIST_STATE
       }
     })
-    .addCase(addList, (state, { payload: { pathName, url } }) => {
-      if (!state.byOsUrl[pathName][url]) {
-        state.byOsUrl[pathName][url] = NEW_LIST_STATE
-      }
-    })
-    .addCase(removeList, (state, { payload: { pathName, url } }) => {
+    .addCase(removeList, (state, { payload: { url, pathName } }) => {
       if (state.byOsUrl[pathName][url]) {
         delete state.byOsUrl[pathName][url]
       }
-      if (state.selectedOsListUrl?.[pathName] === url) {
-        state.selectedOsListUrl[pathName] =
-          url === DEFAULT_TOKEN_LIST_URL[pathName]
-            ? Object.keys(state.byOsUrl[pathName])[0]
-            : DEFAULT_TOKEN_LIST_URL[pathName]
+      // remove list from active urls if needed
+      if (state.activeOsListUrls?.[pathName] && state.activeOsListUrls[pathName].includes(url)) {
+        state.activeOsListUrls[pathName] = state.activeOsListUrls[pathName].filter(u => u !== url)
       }
     })
-    .addCase(acceptListUpdate, (state, { payload: { pathName, url } }) => {
+    .addCase(enableList, (state, { payload: { url, pathName } }) => {
+      if (!state.byOsUrl[pathName][url]) {
+        state.byOsUrl[pathName][url] = NEW_LIST_STATE
+      }
+
+      if (state.activeOsListUrls && !state.activeOsListUrls[pathName].includes(url)) {
+        state.activeOsListUrls[pathName].push(url)
+      }
+
+      if (!state.activeOsListUrls) {
+        if (pathName === 'uniswap') {
+          state.activeOsListUrls = {
+            uniswap: [url],
+            sushiswap: [...DEFAULT_ACTIVE_LIST_URLS.sushiswap]
+          }
+        } else {
+          state.activeOsListUrls = {
+            uniswap: [...DEFAULT_ACTIVE_LIST_URLS.uniswap],
+            sushiswap: [url]
+          }
+        }
+      }
+    })
+    .addCase(disableList, (state, { payload: { url, pathName } }) => {
+      if (state.activeOsListUrls && state.activeOsListUrls[pathName].includes(url)) {
+        state.activeOsListUrls[pathName] = state.activeOsListUrls[pathName].filter(u => u !== url)
+      }
+    })
+    .addCase(acceptListUpdate, (state, { payload: { url, pathName } }) => {
       if (!state.byOsUrl[pathName][url]?.pendingUpdate) {
         throw new Error('accept list update called without pending update')
       }
@@ -157,7 +169,7 @@ export default createReducer(initialState, builder =>
       // state loaded from localStorage, but new lists have never been initialized
       if (!state.lastInitializedDefaultOsListOfLists) {
         state.byOsUrl = initialState.byOsUrl
-        state.selectedOsListUrl = DEFAULT_TOKEN_LIST_URL
+        state.activeOsListUrls = initialState.activeOsListUrls
       } else if (state.lastInitializedDefaultOsListOfLists) {
         let lastInitializedSet: Set<string> = new Set()
         Object.keys(state.lastInitializedDefaultOsListOfLists).forEach(listKey => {
@@ -200,14 +212,19 @@ export default createReducer(initialState, builder =>
 
       state.lastInitializedDefaultOsListOfLists = DEFAULT_LIST_OF_LISTS
 
-      if (!state.selectedOsListUrl) {
-        state.selectedOsListUrl = DEFAULT_TOKEN_LIST_URL
-        if (!state.byOsUrl['uniswap'][DEFAULT_TOKEN_LIST_URL['uniswap']]) {
-          state.byOsUrl['uniswap'][DEFAULT_TOKEN_LIST_URL['uniswap']] = NEW_LIST_STATE
-        }
-        if (!state.byOsUrl['sushiswap'][DEFAULT_TOKEN_LIST_URL['sushiswap']]) {
-          state.byOsUrl['sushiswap'][DEFAULT_TOKEN_LIST_URL['sushiswap']] = NEW_LIST_STATE
-        }
+      // if no active lists, activate defaults
+      if (!state.activeOsListUrls) {
+        state.activeOsListUrls = DEFAULT_ACTIVE_LIST_URLS
+
+        // for each list on default list, initialize if needed
+        Object.keys(DEFAULT_ACTIVE_LIST_URLS).forEach(listKey => {
+          DEFAULT_ACTIVE_LIST_URLS[listKey as PathNameType].forEach((listUrl: string) => {
+            if (!state.byOsUrl[listKey][listUrl]) {
+              state.byOsUrl[listKey][listUrl] = NEW_LIST_STATE
+            }
+            return true
+          })
+        })
       }
     })
 )

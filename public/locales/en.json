@@ -7,6 +7,7 @@
   "disconnected": "Disconnected",
   "home": "Home",
   "lending": "Lending",
+  "flashLoan": "FlashLoan",
   "swap": "Swap",
   "swapAnyway": "Swap Anyway",
   "send": "Send",
@@ -185,5 +186,7 @@
   "expertModeUsageNotice": "ONLY USE THIS MODE IF YOU KNOW WHAT YOU ARE DOING.",
   "confirm": "confirm",
   "confirmExpertMode": "Please type the word \"confirm\" to enable expert mode.",
-  "turnOnExpertMode": "Turn On Expert Mode"
+  "turnOnExpertMode": "Turn On Expert Mode",
+  "disableMultihops": "Disable Multihops",
+  "restrictSwapPairs": "Restricts swaps to direct pairs only."
 }
