@@ -305,7 +305,8 @@ export function toFlashLoanV1LiquidityToken(token: Token): Token {
  */
 export function useTrackedTokenPools(): Token[] {
   const { chainId } = useActiveWeb3React()
-  const tokens = useAllTokens()
+  const pathName = usePathName()
+  const tokens = useAllTokens(pathName)
 
   // pinned pools
   const pinnedPools = useMemo(() => (chainId ? PINNED_POOLS[chainId] ?? [] : []), [chainId])

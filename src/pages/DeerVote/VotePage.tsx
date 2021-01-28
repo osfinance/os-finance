@@ -24,6 +24,7 @@ import { GreyCard } from '../../components/Card'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { BigNumber } from 'ethers'
+import { usePathName } from 'state/lists/hooks'
 
 const PageWrapper = styled(AutoColumn)`
   width: 100%;
@@ -109,6 +110,7 @@ export default function VotePage({
   }
 }: RouteComponentProps<{ id: string }>) {
   const { chainId, account } = useActiveWeb3React()
+  const pathName = usePathName()
 
   // get data for this specific proposal
   const proposalData: ProposalData | undefined = useProposalData(id)
@@ -181,7 +183,7 @@ export default function VotePage({
       <DelegateModal isOpen={showDelegateModal} onDismiss={toggleDelegateModal} title="Unlock Votes" />
       <ProposalInfo gap="lg" justify="start">
         <RowBetween style={{ width: '100%' }}>
-          <ArrowWrapper to="/vote">
+          <ArrowWrapper to={`/${pathName}/vote`}>
             <ArrowLeft size={20} /> All Proposals
           </ArrowWrapper>
           {proposalData && <ProposalStatus status={proposalData?.status ?? ''}>{proposalData?.status}</ProposalStatus>}
@@ -204,7 +206,7 @@ export default function VotePage({
                 {proposalData.startBlock} are eligible for voting.{' '}
                 {showLinkForUnlock && (
                   <span>
-                    <StyledInternalLink to="/vote">Unlock voting</StyledInternalLink> to prepare for the next proposal.
+                    <StyledInternalLink to={`/${pathName}/vote`}>Unlock voting</StyledInternalLink> to prepare for the next proposal.
                   </span>
                 )}
               </TYPE.black>

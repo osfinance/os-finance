@@ -21,6 +21,7 @@ import Loader from '../../components/Loader'
 import FormattedCurrencyAmount from '../../components/FormattedCurrencyAmount'
 import { useModalOpen, useToggleDelegateModal } from '../../state/application/hooks'
 import { ApplicationModal } from '../../state/application/actions'
+import { usePathName } from 'state/lists/hooks'
 
 const PageWrapper = styled(AutoColumn)``
 
@@ -104,6 +105,7 @@ const EmptyProposals = styled.div`
 
 export default function DeerVote() {
   const { account, chainId } = useActiveWeb3React()
+  const pathName = usePathName()
 
   // toggle for showing delegation modal
   const showDelegateModal = useModalOpen(ApplicationModal.DELEGATE)
@@ -213,7 +215,7 @@ export default function DeerVote() {
         )}
         {allProposals?.map((p: ProposalData, i) => {
           return (
-            <Proposal as={Link} to={'/vote/' + p.id} key={i}>
+            <Proposal as={Link} to={`/${pathName}/vote/` + p.id} key={i}>
               <ProposalNumber>{p.id}</ProposalNumber>
               <ProposalTitle>{p.title}</ProposalTitle>
               <ProposalStatus status={p.status}>{p.status}</ProposalStatus>

@@ -78,6 +78,7 @@ const EmptyProposals = styled.div`
 export default function Pool() {
   const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
+  const pathName = 'compound'
 
   // fetch the user's balances of all tracked V2 LP tokens
   const trackedTokenPools = useTrackedTokenPools()
@@ -158,7 +159,7 @@ export default function Pool() {
                 </TYPE.mediumHeader>
               </HideSmall>
               <ButtonRow>
-                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to="/create/ETH">
+                <ResponsiveButtonSecondary as={Link} padding="6px 8px" to={`/${pathName}/create/ETH`}>
                   Create a pool
                 </ResponsiveButtonSecondary>
                 <ResponsiveButtonPrimary

@@ -2,7 +2,7 @@ import { JSBI, Pair, Percent, TokenAmount } from '@uniswap/sdk'
 import { darken } from 'polished'
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -333,7 +333,7 @@ export default function FullPositionCard({ pair, border, stakedBalance }: Positi
                 padding="8px"
                 borderRadius="8px"
                 as={Link}
-                to={`/uni/${currencyId(currency0)}/${currencyId(currency1)}`}
+                to={`/${pathName}/uni/${currencyId(currency0)}/${currencyId(currency1)}`}
                 width="100%"
               >
                 Manage Liquidity in Rewards Pool

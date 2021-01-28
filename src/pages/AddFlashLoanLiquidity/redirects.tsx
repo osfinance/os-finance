@@ -3,7 +3,7 @@ import { Redirect, RouteComponentProps } from 'react-router-dom'
 import AddFlashLoanLiquidity from './index'
 
 export function RedirectToAddLiquidity() {
-  return <Redirect to="/add/" />
+  return <Redirect to="/compound/add/" />
 }
 
 export function RedirectFlashLoanAddLiquidity(props: RouteComponentProps<{ currencyId: string }>) {

@@ -25,6 +25,7 @@ import CurrencyLogo from '../CurrencyLogo'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
 import { Dots } from '../swap/styleds'
 import { BIG_INT_ZERO } from '../../constants'
+import { usePathName } from 'state/lists/hooks'
 
 export const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -145,6 +146,7 @@ export default function FullPositionCard({ pool, border, stakedBalance }: Positi
   const { account } = useActiveWeb3React()
 
   const currency = unwrappedToken(pool.token)
+  const pathName = usePathName()
 
   const [showMore, setShowMore] = useState(false)
 
@@ -266,7 +268,7 @@ export default function FullPositionCard({ pool, border, stakedBalance }: Positi
                   padding="8px"
                   borderRadius="8px"
                   as={Link}
-                  to={`/add/${currencyId(currency)}`}
+                  to={`/${pathName}/add/${currencyId(currency)}`}
                   width="48%"
                 >
                   Add
@@ -276,7 +278,7 @@ export default function FullPositionCard({ pool, border, stakedBalance }: Positi
                   borderRadius="8px"
                   as={Link}
                   width="48%"
-                  to={`/remove/${currencyId(currency)}`}
+                  to={`/${pathName}/remove/${currencyId(currency)}`}
                 >
                   Remove
                 </ButtonPrimary>
@@ -287,7 +289,7 @@ export default function FullPositionCard({ pool, border, stakedBalance }: Positi
                 padding="8px"
                 borderRadius="8px"
                 as={Link}
-                to={`/uni/${currencyId(currency)}`}
+                to={`/${pathName}/uni/${currencyId(currency)}`}
                 width="100%"
               >
                 Manage Liquidity in Rewards Pool

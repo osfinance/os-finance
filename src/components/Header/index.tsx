@@ -478,24 +478,24 @@ function CompoundHeaderLinks() {
     <>
       <StyledNavLink
         id={`pool-nav-link`}
-        to={'/pool'}
+        to={'/compound/pool'}
         isActive={(match, { pathname }) =>
           Boolean(match) ||
-          pathname.startsWith('/add') ||
-          pathname.startsWith('/remove') ||
-          pathname.startsWith('/create') ||
-          pathname.startsWith('/find')
+          pathname.startsWith('/compound/add') ||
+          pathname.startsWith('/compound/remove') ||
+          pathname.startsWith('/compound/create') ||
+          pathname.startsWith('/compound/find')
         }
       >
         {t('flashLoan')}
       </StyledNavLink>
-      <StyledNavLink id={`lending-nav-link`} to={'/lending'}>
+      <StyledNavLink id={`lending-nav-link`} to={'/compound/lending'}>
         {t('lending')}
       </StyledNavLink>
-      <StyledNavLink id={`stake-nav-link`} to={'/deer'}>
+      <StyledNavLink id={`stake-nav-link`} to={'/compound/deer'}>
         DEER
       </StyledNavLink>
-      <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
+      <StyledNavLink id={`stake-nav-link`} to={'/compound/vote'}>
         Vote
       </StyledNavLink>
       <StyledExternalLink id={`stake-nav-link`} href={'https://info.deerfi.com'}>
